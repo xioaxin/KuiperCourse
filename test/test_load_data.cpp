@@ -33,7 +33,7 @@ TEST(test_data_load, load_csv_with_head1) {
   uint32_t index = 1;
   uint32_t rows = data->rows();
   uint32_t cols = data->cols();
-  LOG(INFO)  << data;
+//  LOG(INFO)  << data;
   ASSERT_EQ(rows, 3);
   ASSERT_EQ(cols, 3);
   ASSERT_EQ(headers.size(), 3);

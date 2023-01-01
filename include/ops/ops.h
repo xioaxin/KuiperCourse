@@ -8,14 +8,14 @@ namespace kuiper_infer {
     enum class OpType {
         kOperatorUnknown = -1,
         kOperatorRelu = 0,
+        kOperatorSigmoid = 1
     };
-    class  Operator{
+
+    class Operator {
     public:
-        OpType op_type_=OpType::kOperatorUnknown;
-        virtual ~Operator()=default;
+        OpType op_type_ = OpType::kOperatorUnknown;
+        virtual ~Operator() = default;
         explicit Operator(OpType opType);
-
     };
-
 }
 #endif //KUIPER_COURSE_OPS_H
