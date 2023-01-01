@@ -6,7 +6,6 @@
 #include "ops/sigmoid_op.h"
 #include "layer/sigmoid_layer.h"
 #include "factory/layer_factory.hpp"
-#include "cmath"
 TEST(test_layer, forward_sigmoid1) {
     using namespace kuiper_infer;
     std::shared_ptr<Operator> sigmoid_op = std::make_shared<SigmoidOperator>();
@@ -21,13 +20,13 @@ TEST(test_layer, forward_sigmoid1) {
     layer.Forwards(inputs, outputs);
     ASSERT_EQ(outputs.size(), 1);
     for (int i = 0; i < outputs.size(); ++i) {
-        ASSERT_EQ(outputs.at(i)->index(0), 1/(1+ exp(input->index(0))));
-        ASSERT_EQ(outputs.at(i)->index(1), 1/(1+ exp(input->index(1))));
-        ASSERT_EQ(outputs.at(i)->index(2), 1/(1+ exp(input->index(2))));
+        ASSERT_EQ(outputs.at(i)->index(0), 1/(1+ std::exp(1.f)));
+        ASSERT_EQ(outputs.at(i)->index(1), 1/(1+ std::exp(2.f)));
+        ASSERT_EQ(outputs.at(i)->index(2), 1/(1+ std::exp(-3.f)));
     }
 }
 
-TEST(test_layer, forward_relu2) {
+TEST(test_layer, forward_sigmoid2) {
     using namespace kuiper_infer;
     std::shared_ptr<Operator> sigmoid_op = std::make_shared<SigmoidOperator>();
     std::shared_ptr<Layer> sigmoid_layer = LayerRegisterer::CreateLayer(sigmoid_op);
@@ -41,8 +40,8 @@ TEST(test_layer, forward_relu2) {
     sigmoid_layer->Forwards(inputs, outputs);
     ASSERT_EQ(outputs.size(), 1);
     for (int i = 0; i < outputs.size(); ++i) {
-        ASSERT_EQ(outputs.at(i)->index(0), 1/(1+ exp(input->index(0))));
-        ASSERT_EQ(outputs.at(i)->index(1), 1/(1+ exp(input->index(1))));
-        ASSERT_EQ(outputs.at(i)->index(2), 1/(1+ exp(input->index(2))));
+        ASSERT_EQ(outputs.at(i)->index(0), 1/(1+ std::exp(1.f)));
+        ASSERT_EQ(outputs.at(i)->index(1), 1/(1+ std::exp(2.f)));
+        ASSERT_EQ(outputs.at(i)->index(2), 1/(1+ std::exp(-3.f)));
     }
 }
