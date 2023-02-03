@@ -8,7 +8,9 @@ namespace kuiper_infer {
     enum class OpType {
         kOperatorUnknown = -1,
         kOperatorRelu = 0,
-        kOperatorSigmoid = 1
+        kOperatorSigmoid = 1,
+        kOperatorRelu6 = 2,
+        kOperatorLeakyRelu=3
     };
 
     class Operator {
