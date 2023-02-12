@@ -10,7 +10,8 @@ namespace kuiper_infer {
         kOperatorRelu = 0,
         kOperatorSigmoid = 1,
         kOperatorRelu6 = 2,
-        kOperatorLeakyRelu=3
+        kOperatorLeakyRelu = 3,
+        kOperatorMaxPooling = 4,
     };
 
     class Operator {
