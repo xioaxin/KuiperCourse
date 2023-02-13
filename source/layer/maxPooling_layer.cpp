@@ -27,7 +27,7 @@ namespace kuiper_infer {
         const uint32_t batch_size = inputs.size();
         for (uint32_t i = 0; i < batch_size; i++) {
             const std::shared_ptr<Tensor<float>> &input_data_ = inputs.at(i);
-            input_data_->Padding({padding_h, padding_h, padding_w, padding_w}, std::numeric_limits<float>::lowest());
+            input_data_->padding({padding_h, padding_h, padding_w, padding_w}, std::numeric_limits<float>::lowest());
             const uint32_t input_h = input_data_->rows();
             const uint32_t input_w = input_data_->cols();
             const uint32_t input_c = input_data_->channels();

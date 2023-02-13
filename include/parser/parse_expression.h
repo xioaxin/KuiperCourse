@@ -17,8 +17,10 @@ namespace kuiper_infer {
         TokenComma = 1,
         TokenAdd = 2,
         TokenMul = 3,
-        TokenLeftBracket = 4,
-        TokenRightBracket = 5,
+        TokenDiv = 4,
+        TokenSub = 5,
+        TokenLeftBracket = 6,
+        TokenRightBracket = 7,
     };
 
     struct Token {
@@ -38,14 +40,14 @@ namespace kuiper_infer {
 
         TokenNode(int32_t num_index, std::shared_ptr<TokenNode> left, std::shared_ptr<TokenNode> right) :
                 num_index_(num_index), left_(left), right_(right) {};
-        TokenNode()=default;
+        TokenNode() = default;
     };
 
     class ExpressionParser {
     public:
         explicit ExpressionParser(std::string statement) : statement_(statement) {};
         void Tokenizer(bool need_retoken = false);
-        std::shared_ptr<TokenNode> generate();
+        std::vector<std::shared_ptr<TokenNode>> generate();
         const std::vector<Token> &tokens() const;
         const std::vector<std::string> &token_strs() const;
     private:
