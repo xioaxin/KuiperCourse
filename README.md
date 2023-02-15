@@ -1,4 +1,4 @@
 # KuiperCourse
-[ci_cd]: "https://github.com/xioaxin/KuiperCourse/actions?workflow%3C/C++ CI"
+[![C/C++ CI](https://github.com/xioaxin/KuiperCourse/actions/workflows/c-cpp_ci_cd.yml/badge.svg?branch=master)](https://github.com/xioaxin/KuiperCourse/actions/workflows/c-cpp_ci_cd.yml)
 - [x] Add CI/CD support.
 - [ ] TODO
