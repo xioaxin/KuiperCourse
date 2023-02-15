@@ -21,9 +21,11 @@
 #include <sstream>
 #include <string>
 #include <stack>
+
 #if BUILD_PNNX
 #include <torch/script.h>
 #endif
+
 #include "runtime/store_zip.h"
 
 namespace pnnx {
@@ -758,7 +760,7 @@ Parameter::Parameter(const torch::jit::Value* value)
                 if (attr.shape.size() > 0)
                     fprintf(paramfp, "%d", attr.shape[attr.shape.size() - 1]);
                 fprintf(paramfp, ")");
-                fprintf(paramfp, type_to_string(attr.type));
+                fprintf(paramfp, "%s", type_to_string(attr.type));
                 std::string filename = op->name + "." + it.first;
                 szw.write_file(filename, attr.data.data(), attr.data.size());
             }
@@ -788,7 +790,7 @@ Parameter::Parameter(const torch::jit::Value* value)
                         fprintf(paramfp, "%d", oprand->shape[oprand->shape.size() - 1]);
                 }
                 fprintf(paramfp, ")");
-                fprintf(paramfp, type_to_string(oprand->type));
+                fprintf(paramfp, "%s", type_to_string(oprand->type));
             }
             for (const Operand *oprand: op->outputs) {
                 if (oprand->shape.empty())
@@ -808,7 +810,7 @@ Parameter::Parameter(const torch::jit::Value* value)
                         fprintf(paramfp, "%d", oprand->shape[oprand->shape.size() - 1]);
                 }
                 fprintf(paramfp, ")");
-                fprintf(paramfp, type_to_string(oprand->type));
+                fprintf(paramfp, "%s", type_to_string(oprand->type));
             }
             fprintf(paramfp, "\n");
         }
