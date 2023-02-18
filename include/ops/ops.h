@@ -13,6 +13,7 @@ namespace kuiper_infer {
         kOperatorLeakyRelu = 3,
         kOperatorMaxPooling = 4,
         kOperatorExpression = 5,
+        kOperatorAvgPooling = 6,
     };
 
     class Operator {

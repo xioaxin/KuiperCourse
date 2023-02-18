@@ -1,5 +1,5 @@
 //
-// Created by fss on 22-12-16.
+// Created by fss on 22-12-16. 基于fcube的数据类型包装成Tensor类
 //
 
 #ifndef KUIPER_COURSE_INCLUDE_TENSOR_HPP_
@@ -24,7 +24,7 @@ namespace kuiper_infer {
         // 元素都是float
     public:
         explicit Tensor() = default;
-        explicit Tensor(uint32_t channels, uint32_t rows, uint32_t cols);
+        explicit Tensor(uint32_t channels, uint32_t rows, uint32_t cols); // 通道、行数、列数
         explicit Tensor(const std::vector<uint32_t> &shape);
         static std::shared_ptr<Tensor<float>> create(uint32_t channels, uint32_t rows, uint32_t cols);
         Tensor(const Tensor &tensor);
@@ -56,6 +56,7 @@ namespace kuiper_infer {
         void flatten();
         void reRawShape(const std::vector<uint32_t> &shapes);
         void reRawView(const std::vector<uint32_t> &shapes);
+        // 逐元素操作
         static std::shared_ptr<Tensor<float>> elementAdd(const std::shared_ptr<Tensor<float>> &tensor1,
                                                          const std::shared_ptr<Tensor<float>> &tensor2);
         static std::shared_ptr<Tensor<float>> elementMultiply(const std::shared_ptr<Tensor<float>> &tensor1,

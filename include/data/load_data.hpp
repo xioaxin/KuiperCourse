@@ -1,6 +1,8 @@
 //
 // Created by fss on 22-12-19.
-//
+// 加载CSV数据：
+//  1.直接读取CSV正文数据，按照分割符号分割然后读取入Tensor中
+//  2.读取CSV数据标题和正文数据
 
 #ifndef KUIPER_COURSE_INCLUDE_DATA_LOAD_DATA_HPP_
 #define KUIPER_COURSE_INCLUDE_DATA_LOAD_DATA_HPP_

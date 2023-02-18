@@ -24,7 +24,7 @@ namespace kuiper_infer {
         LOG_IF(FATAL, !layer) << "Layer init failed!";
         return layer;
     }
-
+    // 单例生成模型注册表（哈希表）
     LayerRegisterer::CreateRegistry &LayerRegisterer::Registry() {
         static CreateRegistry *kRegistry = new CreateRegistry();
         CHECK(kRegistry != nullptr) << "Global layer register init failed!";
