@@ -17,10 +17,18 @@
 #include "runtime_op.h"
 
 namespace kuiper_infer {
+    class RuntimeGraphShape {
+    public:
+        static void initOperatorInputTensor(const std::vector<std::shared_ptr<RuntimeOperator>> &operators);
+        static void initOperatorOutputTensor(const std::vector<pnnx::Operator *> &pnnx_operators,
+                                             const std::vector<std::shared_ptr<RuntimeOperator>> &operators);
+    };
+
     class RuntimeGraph {
     public:
-        bool init();
-        RuntimeGraph(std::string param_path, std::string bin_path);
+        bool init(); //判断是否已经初始化计算图
+        void build(const std::string &input_name, const std::string &output_name); //构建计算图
+        RuntimeGraph(std::string param_path, std::string bin_path); //初始化计算图
         void set_bin_path(const std::string &bin_path);
         void set_param_path(const std::string &param_path);
         const std::string &param_path() const;
