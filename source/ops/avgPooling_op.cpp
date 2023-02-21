@@ -1,7 +1,4 @@
 //
-// Created by zpx on 2023/02/18.
-//
-//
 // Created by zpx on 2023/02/03.
 //
 #include "ops/avgPooling_op.h"

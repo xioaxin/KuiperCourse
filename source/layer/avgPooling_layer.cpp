@@ -53,8 +53,8 @@ namespace kuiper_infer {
 
     std::shared_ptr<Layer> AvgPoolingLayer::CreateInstance(const std::shared_ptr<Operator> &op) {
         CHECK(op->op_type_ == OpType::kOperatorAvgPooling);
-        std::shared_ptr<Layer> max_layer = std::make_shared<AvgPoolingLayer>(op);
-        return max_layer;
+        std::shared_ptr<Layer> avg_layer = std::make_shared<AvgPoolingLayer>(op);
+        return avg_layer;
     }
 
     LayerRegistererWrapper kAvgPoolingLayer(OpType::kOperatorAvgPooling, AvgPoolingLayer::CreateInstance);

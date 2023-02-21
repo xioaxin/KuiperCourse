@@ -9,6 +9,7 @@
 #include <glog/logging.h>
 
 namespace kuiper_infer {
+    // 转为后缀表达式
     void reversePolish(const std::shared_ptr<TokenNode> &roo_node,
                        std::vector<std::shared_ptr<TokenNode>> &reverse_polish) {
         if (roo_node != nullptr) {
@@ -18,6 +19,7 @@ namespace kuiper_infer {
         }
     }
 
+    // 解析表达式：将字符串提取成操作数和操作符
     void ExpressionParser::Tokenizer(bool need_retoken) {
         if (!need_retoken && !tokens_.empty())return;
         CHECK(!statement_.empty()) << "The input statement is empty!";
@@ -114,7 +116,7 @@ namespace kuiper_infer {
     const std::vector<std::string> &ExpressionParser::token_strs() const {
         return this->token_strs_;
     }
-
+    // 建立一颗前序二叉树
     std::shared_ptr<TokenNode> ExpressionParser::generate_(int32_t &index) {
         CHECK(index < this->tokens_.size());
         const auto current_token = this->tokens_.at(index);
@@ -154,9 +156,9 @@ namespace kuiper_infer {
             index += 1;
             CHECK(index < this->tokens_.size());
             const auto right_token = this->tokens_.at(index);
-            if (right_token.tokenType_ == TokenType::TokenInputNumber
-                || right_token.tokenType_ == TokenType::TokenAdd || right_token.tokenType_ == TokenType::TokenMul ||
-                left_token.tokenType_ == TokenType::TokenSub || left_token.tokenType_ == TokenType::TokenDiv) {
+            if (right_token.tokenType_ == TokenType::TokenInputNumber || right_token.tokenType_ == TokenType::TokenAdd
+                || right_token.tokenType_ == TokenType::TokenMul || left_token.tokenType_ == TokenType::TokenSub ||
+                left_token.tokenType_ == TokenType::TokenDiv) {
                 current_node->right_ = generate_(index);
             } else {
                 LOG(FATAL) << "Unknown token type: " << int(left_token.tokenType_);
@@ -180,7 +182,7 @@ namespace kuiper_infer {
         CHECK(root != nullptr);
         CHECK(index == tokens_.size() - 1);
         std::vector<std::shared_ptr<TokenNode>> reverse_polish;
-        reversePolish(root, reverse_polish);
+        reversePolish(root, reverse_polish); // 将前序二叉树转为后序二叉树得到，后缀运算表达式
         return reverse_polish;
     }
 }
