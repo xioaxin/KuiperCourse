@@ -41,7 +41,6 @@ namespace kuiper_infer {
                 for (uint32_t r = 0; r < input_rows - kernel_h + 1; r += stride_h) {
                     for (uint32_t c = 0; c < input_cols - kernel_w + 1; c += stride_w) {
                         const arma::fmat &region = input_channel.submat(r, c, r + kernel_h - 1, c + kernel_w - 1);
-                        // TODO
                         output_channel.at(int(r / stride_h), int(c / stride_w)) = arma::mean(arma::mean(region));
                     }
                 }
