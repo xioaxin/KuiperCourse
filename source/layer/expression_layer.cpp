@@ -10,7 +10,7 @@
 
 namespace kuiper_infer {
     ExpressionLayer::ExpressionLayer(const std::shared_ptr<Operator> &op) : Layer("Expression") {
-        CHECK(op->op_type_ == OpType::kOperatorExpression) << "Operator was a wrong typr: " << int(op->op_type_);
+        CHECK(op->op_type_ == OpType::kOperatorExpression) << "Operator was a wrong type: " << int(op->op_type_);
         ExpressionOperator *expressionOperator = dynamic_cast<ExpressionOperator *>(op.get());
         CHECK(expressionOperator != nullptr) << "Expression operator is empty";
         this->op_ = std::make_unique<ExpressionOperator>(*expressionOperator);

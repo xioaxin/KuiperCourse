@@ -9,7 +9,7 @@
 
 namespace kuiper_infer {
     LeakyReluLayer::LeakyReluLayer(const std::shared_ptr<Operator> &op) : Layer("LeakyRelu") {
-        CHECK(op->op_type_ == OpType::kOperatorLeakyRelu) << "Operator was a wrong typr: " << int(op->op_type_);
+        CHECK(op->op_type_ == OpType::kOperatorLeakyRelu) << "Operator was a wrong type: " << int(op->op_type_);
         LeakyReluOperator *leakyRelu_op = dynamic_cast<LeakyReluOperator *>(op.get());
         CHECK(leakyRelu_op != nullptr) << "Relu operator is empty";
         this->op_ = std::make_unique<LeakyReluOperator>(leakyRelu_op->get_thresh());

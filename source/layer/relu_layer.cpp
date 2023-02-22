@@ -9,7 +9,7 @@
 
 namespace kuiper_infer {
     ReluLayer::ReluLayer(const std::shared_ptr<Operator> &op) : Layer("Relu") {
-        CHECK(op->op_type_ == OpType::kOperatorRelu) << "Operator was a wrong typr: " << int(op->op_type_);
+        CHECK(op->op_type_ == OpType::kOperatorRelu) << "Operator was a wrong type: " << int(op->op_type_);
         ReluOperator *relu_op = dynamic_cast<ReluOperator *>(op.get());
         CHECK(relu_op != nullptr) << "Relu operator is empty";
         this->op_ = std::make_unique<ReluOperator>(relu_op->get_thresh());

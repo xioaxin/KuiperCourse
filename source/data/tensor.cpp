@@ -354,5 +354,9 @@ namespace kuiper_infer {
         CHECK(!this->data_.empty());
         return this->data_.memptr();
     }
+
+    std::shared_ptr<Tensor<float>> Tensor<float>::clone() {
+        return std::make_shared<ftensor>(*this);
+    }
 }
 

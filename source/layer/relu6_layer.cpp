@@ -7,7 +7,7 @@
 #include "factory/layer_factory.hpp"
 namespace kuiper_infer {
     Relu6Layer::Relu6Layer(const std::shared_ptr<Operator> &op) : Layer("Relu6") {
-        CHECK(op->op_type_ == OpType::kOperatorRelu6) << "Operator was a wrong typr: " << int(op->op_type_);
+        CHECK(op->op_type_ == OpType::kOperatorRelu6) << "Operator was a wrong type: " << int(op->op_type_);
         Relu6Operator *relu_op = dynamic_cast<Relu6Operator *>(op.get());
         CHECK(relu_op != nullptr) << "Relu operator is empty";
         this->op_ = std::make_unique<Relu6Operator>(relu_op->get_thresh());
