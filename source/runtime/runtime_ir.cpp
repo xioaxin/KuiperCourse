@@ -95,6 +95,7 @@ namespace kuiper_infer {
                 this->output_operators_maps_.insert({kOperator->name, kOperator});
             } else {
                 // 以后的课中加layer的
+
             }
         }
         RuntimeGraphShape::initOperatorInputTensor(operators_);
@@ -246,6 +247,17 @@ namespace kuiper_infer {
                 this->operators_.push_back(runtimeOperator);
             }
         }
+        for (const auto &current_operator: this->operators_) {
+            const std::vector<std::string> &output_names = current_operator->output_names;
+            for (const auto &next_operator: this->operators_) {
+                if (next_operator == current_operator) {
+                    continue;
+                }
+                if (std::find(output_names.begin(), output_names.end(), next_operator->name) != output_names.end()) {
+                    current_operator->output_operators.insert({next_operator->name, next_operator});
+                }
+            }
+        }
         graphState_ = GraphState::NeedBuild;
         return true;
     }
@@ -368,5 +380,112 @@ namespace kuiper_infer {
 
     const std::vector<std::shared_ptr<RuntimeOperator>> RuntimeGraph::operators() const {
         return this->operators_;
+    }
+
+    //TODO: 待理解
+    std::vector<std::shared_ptr<ftensor>>
+    RuntimeGraph::forward(const std::vector<std::shared_ptr<ftensor>> &inputs, bool debug) {
+        if (graphState_ < GraphState::Complete) {
+            LOG(FATAL) << "Graph need be build";
+        }
+        CHECK(graphState_ == GraphState::Complete) << "Graph status error, current status is " << int(graphState_);
+        std::shared_ptr<RuntimeOperator> input_operator;
+        if (input_operators_maps_.find(input_name_) == input_operators_maps_.end()) {
+            LOG(FATAL) << "Can not find the input node: " << input_name_;
+        } else {
+            input_operator = input_operators_maps_[input_name_];
+        }
+        std::shared_ptr<RuntimeOperator> output_operator;
+        if (output_operators_maps_.find(output_name_) == output_operators_maps_.end()) {
+            LOG(FATAL) << "Can not find the output node: " << output_name_;
+        } else {
+            output_operator = output_operators_maps_[output_name_];
+        }
+        std::deque<std::shared_ptr<RuntimeOperator>> operator_queue;
+        operator_queue.push_back(input_operator);
+        std::map<std::string, double> run_duration_infos;
+        while (!operator_queue.empty()) {
+            std::shared_ptr<RuntimeOperator> current_operator = operator_queue.front();
+            operator_queue.pop_front();
+            if (!current_operator || current_operator == output_operator) {
+                LOG(INFO) << "Model infer end";
+                break;
+            }
+            if (current_operator == input_operator) {
+                probeNextLayer(current_operator, operator_queue, inputs);
+            } else {
+                std::string current_operator_name = current_operator->name;
+                if (!checkOperatorReady(current_operator)) {
+                    if (operator_queue.empty()) {
+                        LOG(FATAL) << "Current operator is not ready!";
+                        break;
+                    } else {
+                        operator_queue.push_back(current_operator);
+                    }
+                }
+                const std::vector<std::shared_ptr<RuntimeOperand>> &input_operand_datas = current_operator->input_operands_seq;
+                std::vector<std::shared_ptr<ftensor >> layer_input_datas;
+                for (const auto &input_operand_data: input_operand_datas) {
+                    for (const auto &input_data: input_operand_data->datas) {
+                        layer_input_datas.push_back(input_data);
+                    }
+                }
+                CHECK(!layer_input_datas.empty()) << "Layer input data is empty";
+                CHECK(current_operator->output_operands != nullptr && !current_operator->output_operands->datas.empty())
+                                << "Layer output data is empty";
+                const auto &start = std::chrono::steady_clock::now();
+                probeNextLayer(current_operator, operator_queue, current_operator->output_operands->datas);
+                if (debug) {
+                    LOG(INFO) << "current operator: " << current_operator->name;
+                }
+            }
+        }
+        for (const auto &op: this->operators_) {
+            op->meet_num = 0;
+        }
+        CHECK(output_operator->input_operands.size() == 1) << "The graph only support one path to the output node yet!";
+        const auto &output_operator_operand = output_operator->input_operands.begin();
+        const auto &output_operand = output_operator_operand->second;
+        return output_operand->datas;
+    }
+
+    void RuntimeGraph::probeNextLayer(const std::shared_ptr<RuntimeOperator> &current_operator,
+                                      std::deque<std::shared_ptr<RuntimeOperator>> &operator_queue,
+                                      std::vector<std::shared_ptr<ftensor>> layer_output_data) {
+        const auto &next_operators = current_operator->output_operators;
+        std::vector<std::vector<std::shared_ptr<ftensor>>> next_input_data_arr;
+        for (const auto &next_operator: next_operators) {
+            const auto &next_rt_operator = next_operator.second;
+            const auto &next_input_operands = next_rt_operator->input_operands;
+            if (next_input_operands.find(current_operator->name) != next_input_operands.end()) {
+                std::vector<std::shared_ptr<ftensor>> next_input_datas = next_input_operands.at(
+                        current_operator->name)->datas;
+                next_input_data_arr.push_back(next_input_datas);
+                next_rt_operator->meet_num += 1;
+                if (std::find(operator_queue.begin(), operator_queue.end(), next_rt_operator) == operator_queue.end()) {
+                    if (checkOperatorReady(next_rt_operator)) {
+                        operator_queue.push_back(next_rt_operator);
+                    }
+                }
+            }
+        }
+        setOperatorInputData(layer_output_data, next_input_data_arr);
+    }
+
+    bool RuntimeGraph::checkOperatorReady(const std::shared_ptr<RuntimeOperator> &op) {
+        CHECK(op != nullptr);
+        CHECK(op->meet_num <= op->input_operands.size());
+        return op->meet_num == op->input_operands.size();
+    }
+
+    void RuntimeGraph::setOperatorInputData(std::vector<std::shared_ptr<ftensor>> &src,
+                                            std::vector<std::vector<std::shared_ptr<ftensor>>> &dest) {
+        CHECK(!src.empty() && !dest.empty()) << "Src or dest array is empty";
+        for (uint32_t j = 0; j < src.size(); j++) {
+            const auto &src_data = src.at(j)->data();
+            for (uint32_t i = 0; i < dest.size(); i++) {
+                dest.at(i).at(j)->set_data(src_data);
+            }
+        }
     }
 }

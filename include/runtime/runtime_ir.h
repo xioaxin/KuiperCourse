@@ -34,7 +34,15 @@ namespace kuiper_infer {
         const std::string &param_path() const;
         const std::string &bin_path() const;
         const std::vector<std::shared_ptr<RuntimeOperator>> operators() const;
+        std::vector<std::shared_ptr<ftensor >>
+        forward(const std::vector<std::shared_ptr<ftensor>> &inputs, bool debug = false);
     private:
+        static void probeNextLayer(const std::shared_ptr<RuntimeOperator> &current_operator,
+                                   std::deque<std::shared_ptr<RuntimeOperator>> &operator_queue,
+                                   std::vector<std::shared_ptr<ftensor>> layer_output_data);
+        static bool checkOperatorReady(const std::shared_ptr<RuntimeOperator> &op);
+        static void setOperatorInputData(std::vector<std::shared_ptr<ftensor>> &src,
+                                         std::vector<std::vector<std::shared_ptr<ftensor>>> &dest);
         // 初始化输入节点的操数
         static void initInputOperators(const std::vector<pnnx::Operand *> &inputs,
                                        const std::shared_ptr<RuntimeOperator> &runtime_operator);
