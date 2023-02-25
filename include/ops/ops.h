@@ -18,6 +18,7 @@ namespace kuiper_infer {
         kOperatorAdaptiveMaxPooling = 8,
         kOperatorConvolution = 9,
         kOperatorBatchNorm = 10,
+        kOperatorSoftMax = 11,
     };
 
     class Operator {
