@@ -8,7 +8,7 @@
 #include "layer/convolution_layer.h"
 
 namespace kuiper_infer {
-    ConvolutionLayer::ConvolutionLayer(const std::shared_ptr<Operator> &op) : Layer("convolution") {
+    ConvolutionLayer::ConvolutionLayer(const std::shared_ptr<Operator> &op) : Layer("Convolution") {
         CHECK(op->op_type_ == OpType::kOperatorConvolution) << "Operator was a wrong type: " << int(op->op_type_);
         ConvolutionOperator *convolutionOperator = dynamic_cast<ConvolutionOperator *>(op.get());
         CHECK(convolutionOperator != nullptr) << "Convolution operator is empty";

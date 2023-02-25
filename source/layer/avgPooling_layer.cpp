@@ -6,7 +6,7 @@
 #include "factory/layer_factory.hpp"
 
 namespace kuiper_infer {
-    AvgPoolingLayer::AvgPoolingLayer(const std::shared_ptr<Operator> &op) : Layer("avgPooling") {
+    AvgPoolingLayer::AvgPoolingLayer(const std::shared_ptr<Operator> &op) : Layer("AvgPooling") {
         CHECK(op->op_type_ == OpType::kOperatorAvgPooling) << "Operator has a wrong type: " << int(op->op_type_);
         AvgPoolingOperator *avgPoolingOperator = dynamic_cast<AvgPoolingOperator *>(op.get());
         CHECK(avgPoolingOperator != nullptr) << "AvgPooling operator is empty";

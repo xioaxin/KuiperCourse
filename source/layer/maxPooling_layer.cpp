@@ -6,7 +6,7 @@
 #include "factory/layer_factory.hpp"
 
 namespace kuiper_infer {
-    MaxPoolingLayer::MaxPoolingLayer(const std::shared_ptr<Operator> &op) : Layer("maxPooling") {
+    MaxPoolingLayer::MaxPoolingLayer(const std::shared_ptr<Operator> &op) : Layer("MaxPooling") {
         CHECK(op->op_type_ == OpType::kOperatorMaxPooling) << "Operator has a wrong type: " << int(op->op_type_);
         MaxPoolingOperator *maxPoolingOperator = dynamic_cast<MaxPoolingOperator *>(op.get());
         CHECK(maxPoolingOperator != nullptr) << "MaxPooling operator is empty";

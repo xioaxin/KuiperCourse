@@ -7,7 +7,7 @@
 
 namespace kuiper_infer {
     AdaptiveAvgPoolingLayer::AdaptiveAvgPoolingLayer(const std::shared_ptr<Operator> &op) : Layer(
-            "adaptiveAvgPooling") {
+            "AdaptiveAvgPooling") {
         CHECK(op->op_type_ == OpType::kOperatorAdaptiveAvgPooling)
                         << "Operator has a wrong type: " << int(op->op_type_);
         AdaptiveAvgPoolingOperator *adaptiveAvgPoolingOperator = dynamic_cast<AdaptiveAvgPoolingOperator *>(op.get());

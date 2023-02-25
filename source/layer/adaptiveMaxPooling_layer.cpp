@@ -7,7 +7,7 @@
 
 namespace kuiper_infer {
     AdaptiveMaxPoolingLayer::AdaptiveMaxPoolingLayer(const std::shared_ptr<Operator> &op) : Layer(
-            "adaptiveMaxPooling") {
+            "AdaptiveMaxPooling") {
         CHECK(op->op_type_ == OpType::kOperatorAdaptiveMaxPooling)
                         << "Operator has a wrong type: " << int(op->op_type_);
         AdaptiveMaxPoolingOperator *adaptiveMaxPoolingOperator = dynamic_cast<AdaptiveMaxPoolingOperator *>(op.get());

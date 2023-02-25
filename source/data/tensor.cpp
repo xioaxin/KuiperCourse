@@ -7,7 +7,7 @@
 
 namespace kuiper_infer {
     Tensor<float>::Tensor(uint32_t channels, uint32_t rows, uint32_t cols) {
-        data_ = arma::fcube(rows, cols, channels);
+        this->data_ = arma::fcube(rows, cols, channels);
         if (channels == 1 && rows == 1) {
             this->raw_shapes_ = std::vector<uint32_t>{cols};
         } else if (channels == 1) {
