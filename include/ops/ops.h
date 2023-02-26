@@ -20,7 +20,8 @@ namespace kuiper_infer {
         kOperatorBatchNorm = 10,
         kOperatorSoftMax = 11,
         kOperatorCat = 12,
-        kOperatorFlatten = 13
+        kOperatorFlatten = 13,
+        kOperatorHardSigmoid = 14,
     };
 
     class Operator {

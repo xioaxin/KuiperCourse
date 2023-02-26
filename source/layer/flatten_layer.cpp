@@ -8,7 +8,7 @@ namespace kuiper_infer {
     FlattenLayer::FlattenLayer(const std::shared_ptr<Operator> &op) : Layer("Flatten") {
         CHECK(op != nullptr && op->op_type_ == OpType::kOperatorFlatten)
                         << "The operator is illegal: " << int(op->op_type_);
-        FlattenOperator *flattenOperator = dynamic_cast<FlattenOperator*>(op.get());
+        FlattenOperator *flattenOperator = dynamic_cast<FlattenOperator *>(op.get());
         this->op_ = std::make_unique<FlattenOperator>(flattenOperator->getStartDim(), flattenOperator->getEndDim());
     }
 
@@ -31,6 +31,7 @@ namespace kuiper_infer {
                 if (j == end_dim)new_shape.push_back(new_dim);
             }
         }
+        outputs.clear();
         for (uint32_t i = 0; i < batch_size; ++i) {
             auto &input_data = inputs.at(i);
             input_data->reRawView(new_shape);           // 改变张量形状
