@@ -19,6 +19,8 @@ namespace kuiper_infer {
         kOperatorConvolution = 9,
         kOperatorBatchNorm = 10,
         kOperatorSoftMax = 11,
+        kOperatorCat = 12,
+        kOperatorFlatten = 13
     };
 
     class Operator {

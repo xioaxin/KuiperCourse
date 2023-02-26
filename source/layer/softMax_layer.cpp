@@ -26,9 +26,7 @@ namespace kuiper_infer {
             }
             CHECK(input_data->shapes() == output_data->shapes()) << "The output size of softmax is error";
             const arma::fcube &input_data_ = input_data->data();
-            arma::fcube &output_data_ = output_data->data();
             const arma::fmat sum = arma::sum(arma::exp(input_data_), 2);
-            LOG(INFO) << "sum shape: " << sum;
             for (uint32_t j = 0; j < input_data->channels(); ++j) {
                 output_data->at(j) = arma::exp(input_data->at(j)) / sum;
             }
