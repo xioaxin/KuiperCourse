@@ -22,6 +22,7 @@ namespace kuiper_infer {
         kOperatorCat = 12,
         kOperatorFlatten = 13,
         kOperatorHardSigmoid = 14,
+        kOperatorHardSwish = 15,
     };
 
     class Operator {

@@ -22,7 +22,7 @@ namespace kuiper_infer {
         const uint32_t batch_size = inputs.size();
         for (int i = 0; i < batch_size; i++) {
             CHECK(!inputs.at(i)->empty());
-            const std::shared_ptr<Tensor<float>> input_data = inputs.at(i);
+            const std::shared_ptr<Tensor<float>> input_data = inputs.at(i)->clone();
             input_data->data().transform([&](float value) {
                 return 1 / (1 + std::exp(-value));
             });

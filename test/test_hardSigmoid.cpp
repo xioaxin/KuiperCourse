@@ -19,6 +19,7 @@ TEST(test_layer, forward_hardSigmoid1) {
     layer.Forwards(inputs, outputs);
     ASSERT_EQ(outputs.size(), 1);
     for (int i = 0; i < outputs.size(); ++i) {
+        outputs.at(i)->show();
         ASSERT_EQ(outputs.at(i)->index(0), 0.f);
         ASSERT_EQ(outputs.at(i)->index(1), 0.f);
         ASSERT_EQ(outputs.at(i)->index(2), 1.f);
@@ -32,15 +33,17 @@ TEST(test_layer, forward_hardSigmoid2) {
     std::shared_ptr<Tensor<float>> input = std::make_shared<Tensor<float>>(1, 1, 3);
     input->index(0) = -1.f;
     input->index(1) = -2.f;
-    input->index(2) = 0.5f;
+    input->index(2) = 3.f;
     std::vector<std::shared_ptr<Tensor<float>>> inputs;
     std::vector<std::shared_ptr<Tensor<float>>> outputs;
     inputs.push_back(input);
+    inputs.push_back(input);
     hardSigmoid_layer->Forwards(inputs, outputs);
-    ASSERT_EQ(outputs.size(), 1);
+    ASSERT_EQ(outputs.size(), 2);
     for (int i = 0; i < outputs.size(); ++i) {
+        outputs.at(i)->show();
         ASSERT_EQ(outputs.at(i)->index(0), 0.f);
         ASSERT_EQ(outputs.at(i)->index(1), 0.f);
-        ASSERT_EQ(outputs.at(i)->index(2), 0.75f);
+        ASSERT_EQ(outputs.at(i)->index(2), 1.f);
     }
 }

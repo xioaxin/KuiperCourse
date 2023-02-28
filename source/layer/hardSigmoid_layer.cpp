@@ -20,10 +20,10 @@ namespace kuiper_infer {
         CHECK(!inputs.empty()) << "The input of hardSigmoidLayer is empty";
         const uint32_t batch_size = inputs.size();
         for (uint32_t i = 0; i < batch_size; ++i) {
-            auto &input_data = inputs.at(i);
+            const auto input_data = inputs.at(i)->clone();
             CHECK(input_data != nullptr && !input_data->empty()) << "Input data of hardSigmoid is illegal";
-            input_data->data().transform([&](float value) {
-                value = (value + 1) / 2;
+            input_data->data().transform([](float value) {
+                value = (value + 1) / 2.0f;
                 if (value > 1)value = 1.0f;
                 if (value < 0)value = 0.f;
                 return value;

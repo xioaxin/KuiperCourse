@@ -48,8 +48,9 @@ TEST(test_layer, forward_relu2) {
     std::vector<std::shared_ptr<Tensor<float>>> inputs;
     std::vector<std::shared_ptr<Tensor<float>>> outputs;
     inputs.push_back(input);
+    inputs.push_back(input);
     relu_layer->Forwards(inputs, outputs);
-    ASSERT_EQ(outputs.size(), 1);
+    ASSERT_EQ(outputs.size(), 2);
     for (int i = 0; i < outputs.size(); ++i) {
         ASSERT_EQ(outputs.at(i)->index(0), 0.f);
         ASSERT_EQ(outputs.at(i)->index(1), 0.f);
