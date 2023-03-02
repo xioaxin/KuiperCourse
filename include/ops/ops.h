@@ -25,6 +25,7 @@ namespace kuiper_infer {
         kOperatorHardSwish = 15,
         kOperatorSilu = 16,
         kOperatorLinear = 17,
+        kOperatorUpSample = 18,
     };
 
     class Operator {
