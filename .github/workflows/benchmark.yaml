@@ -27,10 +27,9 @@ jobs:
     - name: Test
       run: cd bin && ./test_kuiper_course
     - name: Run benchmark
-      run: cd bin && ./benchmark_kuiper_course --benchmark_format=json --benchmark_out=benchmark_result.json
+      run: cd bin && ./benchmark_kuiper_course --benchmark_format=json --benchmark_out=benchmark_result.json && git config --global --add safe.directory /__w/KuiperCourse/KuiperCourse
     - name: Store benchmark result
       uses: benchmark-action/github-action-benchmark@v1
-      run:  git config --global --add safe.directory /__w/KuiperCourse/KuiperCourse
       with:
         name: C++ Benchmark
         tool: 'googlecpp'
