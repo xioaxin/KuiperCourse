@@ -28,9 +28,9 @@ jobs:
     - name: Compile and Test 
       run: mkdir build && cd build && cmake .. && make -j12
     - name: Test
-      run: ./test_kuiper_course
+      run: cd build && ./test_kuiper_course
     - name: Run benchmark
-      run: ./benchmark_kuiper_course --benchmark_format=json --benchmark_out=benchmark_result.json
+      run: cd build && ./benchmark_kuiper_course --benchmark_format=json --benchmark_out=benchmark_result.json
     - name: Store benchmark result
       uses: benchmark-action/github-action-benchmark@v1
       with:
