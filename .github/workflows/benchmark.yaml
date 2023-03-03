@@ -1,4 +1,4 @@
-name: C/C++ CI/CD
+name: C/C++ Benchmark
 
 on:
   push:
