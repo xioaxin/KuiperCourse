@@ -29,12 +29,14 @@ jobs:
       run: mkdir build && cd build && cmake .. && make -j8
   test:
     name: test
+    runs-on: ${{ runner.os }}-primes
     needs: [build]
     steps:
     - name: Test
       run: ./bin/test_kuiper_course -d prime-numbers
   benchmark:
     name: benchmark
+    runs-on: ${{ runner.os }}-primes
     needs: [build,test]
     steps:
     - name: Run benchmark
