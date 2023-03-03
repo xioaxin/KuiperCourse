@@ -36,6 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     container: 
       image: 444047485/kuipercourse_env:v1.0
+      options: --user root
     needs: [build]
     steps:
     - name: Download a Build Artifact
@@ -50,6 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     container: 
       image: 444047485/kuipercourse_env:v1.0
+      options: --user root
     needs: [build,test]
     steps:
     - name: Download a Build Artifact
