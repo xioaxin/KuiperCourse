@@ -1,7 +1,7 @@
 #include <glog/logging.h>
 #include "iostream"
 #include <armadillo>
-
+#include <benchmark/benchmark.h>
 using namespace std;
 using namespace arma;
 
