@@ -45,7 +45,7 @@ jobs:
         name: my-artifact
         path: ./
     - name: Test
-      run: cd bin && ./test_kuiper_course -d prime-numbers
+      run: cd bin && sudo ./test_kuiper_course -d prime-numbers
   benchmark:
     name: benchmark
     runs-on: ubuntu-latest
@@ -60,7 +60,7 @@ jobs:
         name: my-artifact
         path: ./
     - name: Run benchmark
-      run: cd bin && ./benchmark_kuiper_course --benchmark_format=json --benchmark_out=benchmark_result.json
+      run: cd bin && sudo ./benchmark_kuiper_course --benchmark_format=json --benchmark_out=benchmark_result.json
     - name: Store benchmark result
       uses: benchmark-action/github-action-benchmark@v1
       with:
