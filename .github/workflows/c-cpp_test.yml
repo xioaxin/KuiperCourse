@@ -27,38 +27,10 @@ jobs:
         key: env-cache-install-20230303
     - name: Compile and Test 
       run: mkdir build && cd build && cmake .. && make -j12
-    - uses: actions/upload-artifact@v3
-      with:
-        name: my-artifact
-        path: ./ 
-  test:
-    name: test
-    runs-on: ubuntu-latest
-    container: 
-      image: 444047485/kuipercourse_env:v1.0
-    needs: [build]
-    steps:
-    - name: Download a Build Artifact
-      uses: actions/download-artifact@v3.0.2
-      with:
-        name: my-artifact
-        path: ./
     - name: Test
-      run: cd bin && sudo ./test_kuiper_course -d prime-numbers
-  benchmark:
-    name: benchmark
-    runs-on: ubuntu-latest
-    container: 
-      image: 444047485/kuipercourse_env:v1.0
-    needs: [build,test]
-    steps:
-    - name: Download a Build Artifact
-      uses: actions/download-artifact@v3.0.2
-      with:
-        name: my-artifact
-        path: ./
+      run: ./test_kuiper_course
     - name: Run benchmark
-      run: cd bin && sudo ./benchmark_kuiper_course --benchmark_format=json --benchmark_out=benchmark_result.json
+      run: ./benchmark_kuiper_course --benchmark_format=json --benchmark_out=benchmark_result.json
     - name: Store benchmark result
       uses: benchmark-action/github-action-benchmark@v1
       with:
