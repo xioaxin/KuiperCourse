@@ -30,7 +30,9 @@ TEST(test_layer, forward_softMax1) {
     layer.Forwards(inputs, outputs);
     ASSERT_EQ(outputs.size(), 1);
     output = outputs.at(0);
+#ifdef DEBUG
     output->show();
+#endif
     ASSERT_EQ(output->at(0, 0, 0), 0.5f);
     ASSERT_EQ(output->at(1, 0, 0), 0.5f);
 }

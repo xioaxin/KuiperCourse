@@ -37,7 +37,7 @@ namespace kuiper_infer {
         const uint32_t batch = inputs.size();
         CHECK(batch > 0);
         for (uint32_t i = 0; i < batch; i++) {
-            const std::shared_ptr<ftensor> &input = inputs.at(i);
+            const std::shared_ptr<ftensor> &input = inputs.at(i)->clone();
             CHECK(input != nullptr && !input->empty()) << "The input feature map of convolution layer is empty";
             std::shared_ptr<ftensor> input_;
             if (padding_h > 0 || padding_w > 0) {

@@ -3,7 +3,7 @@ project(kuiper_course)
 set(CMAKE_CXX_STANDARD 17)
 
 # DEBUG
-option(DEBUG "Debug the project" ON)
+option(DEBUG "Debug the project" OFF)
 message("TEST_DEBUG Value: ${DEBUG}")
 if(DEBUG)
     add_compile_options("-DDEBUG")

@@ -24,8 +24,10 @@ TEST(test_layer, conv1) {
     }
     std::shared_ptr<ftensor> weight1 = std::make_shared<ftensor>(1, 3, 3);
     weight1->fill(values);
+#ifdef DEBUG
     LOG(INFO) << "weight:";
     weight1->show();
+#endif
     // 设置权重
     std::vector<sftensor> weights;
     weights.push_back(weight1);
@@ -38,8 +40,10 @@ TEST(test_layer, conv1) {
                             "11,12,13,14";
     std::shared_ptr<ftensor> input = std::make_shared<ftensor>(1, 4, 4);
     input->at(0) = input_data;
+#ifdef DEBUG
     LOG(INFO) << "input:";
     input->show();
+#endif
     // 权重数据和输入数据准备完毕
     inputs.push_back(input);
     ConvolutionLayer layer(op);
@@ -69,8 +73,10 @@ TEST(test_layer, conv2) {
     weight1->at(2) = weight_data;
     std::shared_ptr<ftensor> weight2 = weight1->clone();
     std::shared_ptr<ftensor> weight3 = weight1->clone();
+#ifdef DEBUG
     LOG(INFO) << "weight:";
     weight1->show();
+#endif
     // 设置权重
     std::vector<sftensor> weights;
     weights.push_back(weight1);
@@ -87,8 +93,10 @@ TEST(test_layer, conv2) {
     input->at(0) = input_data;
     input->at(1) = input_data;
     input->at(2) = input_data;
+#ifdef DEBUG
     LOG(INFO) << "input:";
     input->show();
+#endif
     // 权重数据和输入数据准备完毕
     inputs.push_back(input);
     ConvolutionLayer layer(op);
@@ -96,6 +104,12 @@ TEST(test_layer, conv2) {
     layer.Forwards(inputs, outputs);
     LOG(INFO) << "result: ";
     for (int i = 0; i < outputs.size(); ++i) {
-        outputs.at(i)->show();
+#ifdef DEBUG
+        outputs[i]->show();
+#endif
+        ASSERT_EQ(outputs[i]->at(0, 0, 0), 342);
+        ASSERT_EQ(outputs[i]->at(0, 0, 1), 396);
+        ASSERT_EQ(outputs[i]->at(0, 1, 0), 522);
+        ASSERT_EQ(outputs[i]->at(0, 1, 1), 576);
     }
 }

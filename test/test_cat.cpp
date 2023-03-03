@@ -51,7 +51,9 @@ TEST(test_layer, forward_cat2) {
     outputs.push_back(std::make_shared<ftensor>(6, 3, 3));
     CatLayer layer(cat_op);
     layer.Forwards(inputs, outputs);
+#ifdef DEBUG
     outputs[0]->show();
+#endif
     ASSERT_EQ(outputs.size(), 1);
     for (int i = 0; i < outputs.size(); ++i) {
         ASSERT_EQ(outputs[0]->at(i, 0, 0), 1);
