@@ -1,12 +1,17 @@
 cmake_minimum_required(VERSION 3.16)
 project(kuiper_course)
-
 set(CMAKE_CXX_STANDARD 17)
+
+# DEBUG
+option(DEBUG "Debug the project" ON)
+message("TEST_DEBUG Value: ${DEBUG}")
+if(DEBUG)
+    add_compile_options("-DDEBUG")
+endif(DEBUG)
 
 find_package(glog REQUIRED)
 find_package(benchmark REQUIRED)
 include_directories(./include)
-
 set(link_lib glog pthread gtest)
 set(link_math_lib armadillo blas lapack)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
