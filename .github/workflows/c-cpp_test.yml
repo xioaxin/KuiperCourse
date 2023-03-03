@@ -19,43 +19,44 @@ jobs:
       uses: actions/checkout@v3
       with:
         ref: master 
+    - name: Compile and Test 
+      run: mkdir build && cd build && cmake .. && make -j12
     - name: Cache Primes
       id: cache-primes
       uses: actions/cache@v3
       with:
         path: prime-numbers
         key: ${{ runner.os }}-primes
-    - name: Compile and Test 
-      run: mkdir build && cd build && cmake .. && make -j12
-  # test:
-  #   name: test
-  #   runs-on: ubuntu-latest
-  #   container: 
-  #     image: 444047485/kuipercourse_env:v1.0
-  #   needs: [build]
-  #   steps:
-  #   - name: Test
-  #     run: cd bin && ./test_kuiper_course -d prime-numbers
-  # benchmark:
-  #   name: benchmark
-  #   runs-on: ubuntu-latest
-  #   container: 
-  #     image: 444047485/kuipercourse_env:v1.0
-  #   needs: [build,test]
-  #   steps:
-  #   - name: Run benchmark
-  #     run: cd bin && ./benchmark_kuiper_course --benchmark_format=json --benchmark_out=benchmark_result.json
-  #   - name: Store benchmark result
-  #     uses: benchmark-action/github-action-benchmark@v1
-  #     with:
-  #       name: C++ Benchmark
-  #       tool: 'googlecpp'
-  #       output-file-path: bin/benchmark_result.json
-  #       github-token: ${{ secrets.GITHUB_TOKEN }}
-  #       auto-push: true
-  #       # Show alert with commit comment on detecting possible performance regression
-  #       alert-threshold: '200%'
-  #       comment-on-alert: true
-  #       fail-on-alert: true
-  #       alert-comment-cc-users: '@zpx'  
+
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    container: 
+      image: 444047485/kuipercourse_env:v1.0
+    needs: [build]
+    steps:
+    - name: Test
+      run: cd bin && ./test_kuiper_course -d prime-numbers
+  benchmark:
+    name: benchmark
+    runs-on: ubuntu-latest
+    container: 
+      image: 444047485/kuipercourse_env:v1.0
+    needs: [build,test]
+    steps:
+    - name: Run benchmark
+      run: cd bin && ./benchmark_kuiper_course --benchmark_format=json --benchmark_out=benchmark_result.json
+    - name: Store benchmark result
+      uses: benchmark-action/github-action-benchmark@v1
+      with:
+        name: C++ Benchmark
+        tool: 'googlecpp'
+        output-file-path: bin/benchmark_result.json
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        auto-push: true
+        # Show alert with commit comment on detecting possible performance regression
+        alert-threshold: '200%'
+        comment-on-alert: true
+        fail-on-alert: true
+        alert-comment-cc-users: '@zpx'  
   
