@@ -1,0 +1,16 @@
+find_package(GTest REQUIRED)
+find_package(benchmark REQUIRED)
+aux_source_directory(../benchmark DIR_BENCHMARK)
+set(link_lib glog gtest pthread)
+set(link_math_lib armadillo blas lapack)
+
+aux_source_directory(../source/data DIR_DATA)
+aux_source_directory(../source/layer DIR_LAYER)
+aux_source_directory(../source/factory DIR_FACTORY)
+aux_source_directory(../source/ops DIR_OPS)
+aux_source_directory(../source/runtime DIR_RUNTIME)
+aux_source_directory(../source/parser DIR_PARSER)
+
+add_executable(benchmark_kuiper_course ${DIR_BENCHMARK} ${DIR_DATA} ${DIR_LAYER} ${DIR_FACTORY} ${DIR_OPS} ${DIR_RUNTIME} ${DIR_PARSER})
+link_directories(/usr/local/lib/)
+target_link_libraries(benchmark_kuiper_course ${link_lib} ${link_math_lib} benchmark::benchmark)
