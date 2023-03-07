@@ -7,7 +7,8 @@
 
 #include "data/tensor.hpp"
 #include <string>
-
+#include <omp.h>
+#define MAX_TEST_ITERATION 4
 namespace kuiper_infer {
     class Layer {
     public:

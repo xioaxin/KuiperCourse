@@ -16,8 +16,11 @@ namespace kuiper_infer {
         CHECK(this->op_ != nullptr && this->op_->op_type_ == OpType::kOperatorSoftMax);
         CHECK(!inputs.empty());
         const uint32_t batch_size = inputs.size();
+#ifdef OPENMP
+#pragma omp parallel for
+#endif
         for (uint32_t i = 0; i < batch_size; ++i) {
-            const auto &input_data = inputs.at(i);
+            const auto &input_data = inputs.at(i)->clone();
             CHECK(input_data != nullptr && !input_data->empty()) << "The input feature map for softmax layer is empty";
             auto &output_data = outputs.at(i);
             if (output_data == nullptr || output_data->empty()) {
@@ -28,6 +31,9 @@ namespace kuiper_infer {
             const arma::fcube &input_data_ = input_data->data();
             const arma::fmat sum = arma::sum(arma::exp(input_data_), 2);
             for (uint32_t j = 0; j < input_data->channels(); ++j) {
+#ifdef OPENMP
+#pragma omp critical
+#endif
                 output_data->at(j) = arma::exp(input_data->at(j)) / sum;
             }
         }

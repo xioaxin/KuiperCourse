@@ -23,6 +23,9 @@ namespace kuiper_infer {
         uint8_t new_dim = 1;
         std::vector<uint32_t> current_shape = inputs[0]->shapes(); // 旧张量的形状
         std::vector<uint32_t> new_shape;
+//#ifdef OPENMP
+//#pragma omp parallel for
+//#endif
         for (int j = 0; j < current_shape.size(); ++j) { // 获取新的张量形状
             if (j < start_dim || j > end_dim) {
                 new_shape.push_back(current_shape[j]);
@@ -32,9 +35,15 @@ namespace kuiper_infer {
             }
         }
         outputs.clear();
+#ifdef OPENMP
+#pragma omp parallel for
+#endif
         for (uint32_t i = 0; i < batch_size; ++i) {
             auto &input_data = inputs.at(i);
             input_data->reRawView(new_shape);           // 改变张量形状
+#ifdef OPENMP
+#pragma omp critical
+#endif
             outputs.push_back(input_data->clone());
         }
     }

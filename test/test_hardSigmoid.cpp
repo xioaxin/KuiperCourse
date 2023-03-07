@@ -36,10 +36,11 @@ TEST(test_layer, forward_hardSigmoid2) {
     input->index(2) = 3.f;
     std::vector<std::shared_ptr<Tensor<float>>> inputs;
     std::vector<std::shared_ptr<Tensor<float>>> outputs;
-    inputs.push_back(input);
-    inputs.push_back(input);
+    for (int i = 0; i < MAX_TEST_ITERATION; ++i) {
+        inputs.push_back(input);
+    }
     hardSigmoid_layer->Forwards(inputs, outputs);
-    ASSERT_EQ(outputs.size(), 2);
+    ASSERT_EQ(outputs.size(), MAX_TEST_ITERATION);
     for (int i = 0; i < outputs.size(); ++i) {
         outputs.at(i)->show();
         ASSERT_EQ(outputs.at(i)->index(0), 0.f);

@@ -6,6 +6,7 @@
 #include "layer/layer.h"
 #include "layer/relu_layer.h"
 #include "factory/layer_factory.hpp"
+#include <omp.h>
 
 namespace kuiper_infer {
     ReluLayer::ReluLayer(const std::shared_ptr<Operator> &op) : Layer("Relu") {
@@ -20,6 +21,9 @@ namespace kuiper_infer {
         CHECK(this->op_ != nullptr);
         CHECK(this->op_->op_type_ == OpType::kOperatorRelu);
         const uint32_t batch_size = inputs.size();
+#ifdef OPENMP
+#pragma omp parallel for
+#endif
         for (int i = 0; i < batch_size; i++) {
             CHECK(!inputs.at(i)->empty());
             const std::shared_ptr<Tensor<float>> &input_data = inputs.at(i)->clone();
@@ -30,6 +34,9 @@ namespace kuiper_infer {
                     return value;
                 }
             });
+#ifdef OPENMP
+#pragma omp critical
+#endif
             outputs.push_back(input_data);
         }
     }

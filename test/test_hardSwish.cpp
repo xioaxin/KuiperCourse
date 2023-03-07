@@ -38,11 +38,11 @@ TEST(test_layer, forward_hardSwish2) {
     input->index(2) = 6.f; //output对应的应该是1
     std::vector<std::shared_ptr<Tensor<float>>> inputs;
     std::vector<std::shared_ptr<Tensor<float>>> outputs;
-    inputs.push_back(input);
-    inputs.push_back(input);
-    inputs.push_back(input);
+    for (int i = 0; i <MAX_TEST_ITERATION ; ++i) {
+        inputs.push_back(input);
+    }
     HardSwishLayer->Forwards(inputs, outputs);
-    ASSERT_EQ(outputs.size(), 3);
+    ASSERT_EQ(outputs.size(), MAX_TEST_ITERATION);
     for (int i = 0; i < outputs.size(); ++i) {
 #ifdef DEBUG
         outputs[i]->show();

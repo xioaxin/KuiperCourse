@@ -21,12 +21,11 @@ TEST(test_layer, forward_relu1) {
     // 主要第一个算子，经典又简单，我们这里开始！
 
     std::vector<std::shared_ptr<Tensor<float>>> inputs; //作为一个批次去处理
-
     std::vector<std::shared_ptr<Tensor<float>>> outputs; //放结果
     inputs.push_back(input);
     ReluLayer layer(relu_op);
     // 因为是4.1 所以没有作业 4.2才有
-     // 一个批次是1
+    // 一个批次是1
     layer.Forwards(inputs, outputs);
     ASSERT_EQ(outputs.size(), 1);
     for (int i = 0; i < outputs.size(); ++i) {
@@ -47,10 +46,11 @@ TEST(test_layer, forward_relu2) {
     input->index(2) = 3.f;
     std::vector<std::shared_ptr<Tensor<float>>> inputs;
     std::vector<std::shared_ptr<Tensor<float>>> outputs;
-    inputs.push_back(input);
-    inputs.push_back(input);
+    for (int i = 0; i < MAX_TEST_ITERATION; ++i) {
+        inputs.push_back(input);
+    }
     relu_layer->Forwards(inputs, outputs);
-    ASSERT_EQ(outputs.size(), 2);
+    ASSERT_EQ(outputs.size(), MAX_TEST_ITERATION);
     for (int i = 0; i < outputs.size(); ++i) {
         ASSERT_EQ(outputs.at(i)->index(0), 0.f);
         ASSERT_EQ(outputs.at(i)->index(1), 0.f);

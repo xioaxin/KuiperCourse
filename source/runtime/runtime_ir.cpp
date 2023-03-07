@@ -109,6 +109,9 @@ namespace kuiper_infer {
                                                      const std::vector<std::shared_ptr<RuntimeOperator>> &operators) {
         CHECK(!pnnx_operators.empty() && !operators.empty());
         CHECK(pnnx_operators.size() == operators.size());
+#ifdef OPENMP
+#pragma omp parallel for
+#endif
         for (uint32_t i = 0; i < pnnx_operators.size(); ++i) {
             const std::vector<pnnx::Operand *> operands = pnnx_operators.at(i)->outputs;
             CHECK(operands.size() <= 1) << "Only support one node one output yet!";
@@ -440,6 +443,9 @@ namespace kuiper_infer {
                 }
             }
         }
+#ifdef OPENMP
+#pragma omp parallel for
+#endif
         for (const auto &op: this->operators_) {
             op->meet_num = 0;
         }
@@ -481,6 +487,9 @@ namespace kuiper_infer {
     void RuntimeGraph::setOperatorInputData(std::vector<std::shared_ptr<ftensor>> &src,
                                             std::vector<std::vector<std::shared_ptr<ftensor>>> &dest) {
         CHECK(!src.empty() && !dest.empty()) << "Src or dest array is empty";
+#ifdef OPENMP
+#pragma omp parallel for
+#endif
         for (uint32_t j = 0; j < src.size(); j++) {
             const auto &src_data = src.at(j)->data();
             for (uint32_t i = 0; i < dest.size(); i++) {

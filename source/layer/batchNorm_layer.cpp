@@ -25,8 +25,11 @@ namespace kuiper_infer {
         auto &affine_beta = this->op_->getAffineBata();
         CHECK(affine_alpha.size() == affine_beta.size()) << "The size of affine mean and affine var are not correct";
         const uint32_t batch_size = inputs.size();
+#ifdef OPENMP
+#pragma omp parallel for
+#endif
         for (uint32_t i = 0; i < batch_size; ++i) {
-            const auto &input_data = inputs.at(i);
+            const auto &input_data = inputs.at(i)->clone();
             CHECK(input_data != nullptr && !input_data->empty()) << "The input data is null or empty";
             CHECK(input_data->channels() == mean_value->channels())
                             << "The channel of input data and mean value size are not equal";

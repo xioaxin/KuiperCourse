@@ -21,18 +21,22 @@ TEST(test_layer, forward_softMax1) {
     std::shared_ptr<ftensor> input = std::make_shared<ftensor>(2, 4, 4);
     input->at(0) = input_data1;
     input->at(1) = input_data2;
-    std::vector<std::shared_ptr<Tensor<float>>> inputs; //作为一个批次去处理
-    inputs.push_back(input);
     std::shared_ptr<ftensor> output = std::make_shared<ftensor>(2, 4, 4);
     std::vector<sftensor> outputs;
-    outputs.push_back(output);
+    std::vector<std::shared_ptr<Tensor<float>>> inputs; //作为一个批次去处理
+    for (int i = 0; i < MAX_TEST_ITERATION; i++) {
+        inputs.push_back(input);
+        outputs.push_back(output);
+    }
     SoftMaxLayer layer(softMax_op);
     layer.Forwards(inputs, outputs);
-    ASSERT_EQ(outputs.size(), 1);
-    output = outputs.at(0);
+    ASSERT_EQ(outputs.size(), MAX_TEST_ITERATION);
+    for (int i = 0; i < outputs.size(); i++) {
+        output = outputs.at(0);
 #ifdef DEBUG
-    output->show();
+        output->show();
 #endif
-    ASSERT_EQ(output->at(0, 0, 0), 0.5f);
-    ASSERT_EQ(output->at(1, 0, 0), 0.5f);
+        ASSERT_EQ(output->at(0, 0, 0), 0.5f);
+        ASSERT_EQ(output->at(1, 0, 0), 0.5f);
+    }
 }

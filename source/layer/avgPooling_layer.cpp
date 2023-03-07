@@ -25,8 +25,11 @@ namespace kuiper_infer {
         const uint32_t stride_h = this->op_->get_stride_h();
         const uint32_t stride_w = this->op_->get_stride_w();
         const uint32_t batch_size = inputs.size();
+#ifdef OPENMP
+#pragma omp parallel for
+#endif
         for (uint32_t i = 0; i < batch_size; i++) {
-            const std::shared_ptr<Tensor<float>> &input_data_ = inputs.at(i);
+            const std::shared_ptr<Tensor<float>> &input_data_ = inputs.at(i)->clone();
             input_data_->padding({padding_h, padding_h, padding_w, padding_w}, std::numeric_limits<float>::lowest());
             const uint32_t input_h = input_data_->rows();
             const uint32_t input_w = input_data_->cols();
@@ -47,6 +50,9 @@ namespace kuiper_infer {
                     }
                 }
             }
+#ifdef OPENMP
+#pragma omp critical
+#endif
             outputs.push_back(output_data);
         }
     }

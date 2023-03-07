@@ -20,12 +20,18 @@ namespace kuiper_infer {
         CHECK(this->op_ != nullptr);
         CHECK(this->op_->op_type_ == OpType::kOperatorSigmoid);
         const uint32_t batch_size = inputs.size();
+#ifdef OPENMP
+#pragma omp parallel for
+#endif
         for (int i = 0; i < batch_size; i++) {
             CHECK(!inputs.at(i)->empty());
             const std::shared_ptr<Tensor<float>> input_data = inputs.at(i)->clone();
             input_data->data().transform([&](float value) {
                 return 1 / (1 + std::exp(-value));
             });
+#ifdef OPENMP
+#pragma omp critical
+#endif
             outputs.push_back(input_data);
         }
     }

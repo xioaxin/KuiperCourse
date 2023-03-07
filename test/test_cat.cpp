@@ -5,7 +5,7 @@
 #include <gtest/gtest.h>
 #include "ops/sigmoid_op.h"
 #include "layer/cat_layer.h"
- //单个batch
+//单个batch
 TEST(test_layer, forward_cat1) {
     using namespace kuiper_infer;
     std::shared_ptr<Operator> cat_op = std::make_shared<CatOperator>(1);
@@ -28,9 +28,9 @@ TEST(test_layer, forward_cat1) {
     layer.Forwards(inputs, outputs);
     ASSERT_EQ(outputs.size(), 1);
     for (int i = 0; i < outputs.size(); ++i) {
-        ASSERT_EQ(outputs[0]->at(i, 0, 0), 1);
-        ASSERT_EQ(outputs[0]->at(i, 0, 2), 3);
-        ASSERT_EQ(outputs[0]->at(i, 2, 2), 9);
+        ASSERT_EQ(outputs[i]->at(0, 0, 0), 1);
+        ASSERT_EQ(outputs[i]->at(1, 0, 2), 3);
+        ASSERT_EQ(outputs[i]->at(2, 2, 2), 9);
     }
 }
 // 多个batch
@@ -47,8 +47,10 @@ TEST(test_layer, forward_cat2) {
     input->at(2) = input_data;
     inputs.push_back(input);
     inputs.push_back(input);
+    inputs.push_back(input);
+    inputs.push_back(input);
     std::vector<std::shared_ptr<Tensor<float>>> outputs; //放结果
-    outputs.push_back(std::make_shared<ftensor>(6, 3, 3));
+    outputs.push_back(std::make_shared<ftensor>(12, 3, 3));
     CatLayer layer(cat_op);
     layer.Forwards(inputs, outputs);
 #ifdef DEBUG

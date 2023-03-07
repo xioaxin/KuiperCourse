@@ -177,9 +177,9 @@ TEST(test_layer, test_linear2_bias) {
     input->show();
 #endif
     // 权重数据和输入数据准备完毕
-    inputs.push_back(input);
-    inputs.push_back(input);
-    inputs.push_back(input);
+    for (int i = 0; i < 10; ++i) {
+        inputs.push_back(input);
+    }
     linear_op->setUseBias(true);
     LinearLayer layer(op);
     std::vector<std::shared_ptr<ftensor >> outputs(1);

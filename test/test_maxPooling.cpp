@@ -16,12 +16,11 @@ TEST(test_layer, forward_maxpooling1) {
     uint32_t padding_w = 0;
     uint32_t pooling_h = 3;
     uint32_t pooling_w = 3;
-
     std::shared_ptr<Operator>
-            max_op = std::make_shared<MaxPoolingOperator>(pooling_h, pooling_w, stride_h, stride_w, padding_h, padding_w);
+            max_op = std::make_shared<MaxPoolingOperator>(pooling_h, pooling_w, stride_h, stride_w, padding_h,
+                                                          padding_w);
     std::shared_ptr<Layer> max_layer = LayerRegisterer::CreateLayer(max_op);
     CHECK(max_layer != nullptr);
-
     arma::fmat input_data = "71 22 63 94  65 16 75 58  9  11;"
                             "12 13 99 31 -31 55 99 857 12 511;"
                             "52 15 19 81 -61 15 49 67  12 41;"
@@ -30,20 +29,20 @@ TEST(test_layer, forward_maxpooling1) {
     input->at(0) = input_data;
     std::vector<std::shared_ptr<Tensor<float>>> inputs;
     std::vector<std::shared_ptr<Tensor<float>>> outputs;
-    inputs.push_back(input);
-
+    for (int i = 0; i < MAX_TEST_ITERATION; i++) {
+        inputs.push_back(input);
+    }
     max_layer->Forwards(inputs, outputs);
-    ASSERT_EQ(outputs.size(), 1);
-    const auto &output = outputs.at(0);
-
-    ASSERT_EQ(output->rows(), 2);
-    ASSERT_EQ(output->cols(), 3);
-
-    ASSERT_EQ(output->at(0, 0, 0), 99);
-    ASSERT_EQ(output->at(0, 0, 1), 94);
-    ASSERT_EQ(output->at(0, 0, 2), 857);
-
-    ASSERT_EQ(output->at(0, 1, 0), 99);
-    ASSERT_EQ(output->at(0, 1, 1), 81);
-    ASSERT_EQ(output->at(0, 1, 2), 857);
+    ASSERT_EQ(outputs.size(), MAX_TEST_ITERATION);
+    for (int i = 0; i < outputs.size(); ++i) {
+        const auto &output = outputs.at(0);
+        ASSERT_EQ(output->rows(), 2);
+        ASSERT_EQ(output->cols(), 3);
+        ASSERT_EQ(output->at(0, 0, 0), 99);
+        ASSERT_EQ(output->at(0, 0, 1), 94);
+        ASSERT_EQ(output->at(0, 0, 2), 857);
+        ASSERT_EQ(output->at(0, 1, 0), 99);
+        ASSERT_EQ(output->at(0, 1, 1), 81);
+        ASSERT_EQ(output->at(0, 1, 2), 857);
+    }
 }

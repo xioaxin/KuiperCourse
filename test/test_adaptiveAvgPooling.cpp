@@ -53,14 +53,17 @@ TEST(test_layer, forward_adptiveAvgPooling2) {
     input->at(0) = input_data;
     std::vector<std::shared_ptr<Tensor<float>>> inputs;
     std::vector<std::shared_ptr<Tensor<float>>> outputs;
-    inputs.push_back(input);
+    for (int i = 0; i < 50; ++i) {
+        inputs.push_back(input);
+    }
     adaptive_avg_layer->Forwards(inputs, outputs);
-    ASSERT_EQ(outputs.size(), 1);
-    const auto &output = outputs.at(0);
-    ASSERT_EQ(output->rows(), 3);
-    ASSERT_EQ(output->cols(), 3);
-    ASSERT_EQ(output->at(0, 0, 0), 1.5);
-    ASSERT_EQ(output->at(0, 0, 1), 3);
-    ASSERT_EQ(output->at(0, 1, 1), 4);
-    ASSERT_EQ(output->at(0, 2, 2), 8);
+    ASSERT_EQ(outputs.size(), 50);
+    for (auto output: outputs) {
+        ASSERT_EQ(output->rows(), 3);
+        ASSERT_EQ(output->cols(), 3);
+        ASSERT_EQ(output->at(0, 0, 0), 1.5);
+        ASSERT_EQ(output->at(0, 0, 1), 3);
+        ASSERT_EQ(output->at(0, 1, 1), 4);
+        ASSERT_EQ(output->at(0, 2, 2), 8);
+    }
 }

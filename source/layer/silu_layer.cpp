@@ -19,12 +19,18 @@ namespace kuiper_infer {
         CHECK(!inputs.empty()) << "The input data of siluLayer is empty";
         const uint32_t batch_size = inputs.size();
         outputs.clear();
+#ifdef OPENMP
+#pragma omp parallel for
+#endif
         for (uint32_t i = 0; i < batch_size; i++) {
             const auto input_data = inputs.at(i)->clone();
             input_data->transform([&](float value) {
                 value = value * 1 / float(1 + exp(-value));
                 return value;
             });
+#ifdef OPENMP
+#pragma omp critical
+#endif
             outputs.push_back(input_data);
         }
     }

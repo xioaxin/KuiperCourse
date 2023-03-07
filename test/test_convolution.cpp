@@ -98,9 +98,11 @@ TEST(test_layer, conv2) {
     input->show();
 #endif
     // 权重数据和输入数据准备完毕
-    inputs.push_back(input);
+    for (int i = 0; i < MAX_TEST_ITERATION; ++i) {
+        inputs.push_back(input);
+    }
     ConvolutionLayer layer(op);
-    std::vector<std::shared_ptr<ftensor >> outputs(1);
+    std::vector<std::shared_ptr<ftensor >> outputs(MAX_TEST_ITERATION);
     layer.Forwards(inputs, outputs);
     LOG(INFO) << "result: ";
     for (int i = 0; i < outputs.size(); ++i) {

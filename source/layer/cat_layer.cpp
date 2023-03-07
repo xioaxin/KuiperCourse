@@ -26,13 +26,16 @@ namespace kuiper_infer {
         const uint32_t output_size = outputs.size();
         CHECK(inputs.size() % output_size == 0);
         const uint32_t packet_size = inputs.size() / output_size;
+        uint32_t rows = inputs.front()->rows();
+        uint32_t cols = inputs.front()->cols();
+#ifdef OPENMP
+#pragma omp parallel for
+#endif
         for (uint32_t i = 0; i < output_size; ++i) {
             std::shared_ptr<ftensor> output = outputs.at(i);
             uint32_t start_channel = 0;
-            uint32_t rows = inputs.front()->rows();
-            uint32_t cols = inputs.front()->cols();
             for (int j = i; j < inputs.size(); ++j) {
-                const std::shared_ptr<ftensor> &input = inputs.at(j);
+                const std::shared_ptr<ftensor> &input = inputs.at(j)->clone();
                 CHECK(input != nullptr && !input->empty()) << "The input feature map of cat layer is empty";
                 const uint32_t in_channels = input->channels();
                 CHECK(rows == input->rows() && cols == input->cols());
@@ -42,9 +45,10 @@ namespace kuiper_infer {
                 }
                 CHECK(output->channels() == in_channels * packet_size && output->rows() == rows &&
                       output->cols() == cols);
-                for(uint32_t c=0;c<in_channels;++c){
-                    output->at(start_channel+c)=input->at(c);
+                for (uint32_t c = 0; c < in_channels; ++c) {
+                    output->at(start_channel + c) = input->at(c);
                 }
+#pragma reduciton crition
                 start_channel += input->channels();
             }
         }

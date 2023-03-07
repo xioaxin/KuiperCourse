@@ -46,13 +46,13 @@ TEST(test_layer, flatten2) {
     input->at(0) = input_data;
     input->at(1) = input_data;
     input->at(2) = input_data;
-    inputs.push_back(input);
-    inputs.push_back(input);
-    inputs.push_back(input);
+    for (int i = 0; i < MAX_TEST_ITERATION; ++i) {
+        inputs.push_back(input);
+    }
     std::vector<std::shared_ptr<Tensor<float>>> outputs; //放结果
     FlattenLayer layer(flatten_op);
     layer.Forwards(inputs, outputs);
-    ASSERT_EQ(outputs.size(), 3);
+    ASSERT_EQ(outputs.size(), MAX_TEST_ITERATION);
     for (int i = 0; i < outputs.size(); ++i) {
 #ifdef DEBUG
         outputs[i]->show();

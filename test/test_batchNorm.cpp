@@ -100,20 +100,24 @@ TEST(test_layer, batchNorm2) {
     input->show();
 #endif
     // 权重数据和输入数据准备完毕
-    inputs.push_back(input);
     BatchNormLayer layer(op);
     std::shared_ptr<ftensor> output = std::make_shared<ftensor>(3, 3, 3);
     std::vector<sftensor> outputs;
-    outputs.push_back(output);
+    for (int i = 0; i < MAX_TEST_ITERATION; ++i) {
+        inputs.push_back(input);
+        outputs.push_back(output);
+    }
     layer.Forwards(inputs, outputs);
 #ifdef DEBUG
     LOG(INFO) << "result: ";
     outputs[0]->show();
 #endif
-    ASSERT_EQ(outputs[0]->at(0, 0, 0), 1);
-    ASSERT_EQ(outputs[0]->at(0, 0, 1), 2);
-    ASSERT_EQ(outputs[0]->at(1, 1, 0), 5);
-    ASSERT_EQ(outputs[0]->at(1, 1, 1), 6);
-    ASSERT_EQ(outputs[0]->at(2, 2, 1), 8);
-    ASSERT_EQ(outputs[0]->at(2, 2, 2), 9);
+    for (int i = 0; i < outputs.size(); ++i) {
+        ASSERT_EQ(outputs[i]->at(0, 0, 0), 1);
+        ASSERT_EQ(outputs[i]->at(0, 0, 1), 2);
+        ASSERT_EQ(outputs[i]->at(1, 1, 0), 5);
+        ASSERT_EQ(outputs[i]->at(1, 1, 1), 6);
+        ASSERT_EQ(outputs[i]->at(2, 2, 1), 8);
+        ASSERT_EQ(outputs[i]->at(2, 2, 2), 9);
+    }
 }

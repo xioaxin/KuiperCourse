@@ -1,7 +1,4 @@
 //
-// Created by zpx on 2023/03/02.
-//
-//
 // Created by zpx on 2023/02/03.
 //
 #include <glog/logging.h>
@@ -79,11 +76,11 @@ TEST(test_layer, upsample_Layer3) {
     input->at(0) = input_data;
     std::vector<std::shared_ptr<Tensor<float>>> inputs;
     std::vector<std::shared_ptr<Tensor<float>>> outputs;
-    inputs.push_back(input);
-    inputs.push_back(input);
-    inputs.push_back(input);
+    for (int i = 0; i < 50; i++) {
+        inputs.push_back(input);
+    }
     upSample_layer->Forwards(inputs, outputs);
-    ASSERT_EQ(outputs.size(), 3);
+    ASSERT_EQ(outputs.size(), 50);
 #ifdef DEBUG
     outputs[0]->show();
 #endif

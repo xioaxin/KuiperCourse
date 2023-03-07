@@ -38,11 +38,11 @@ TEST(test_layer, forward_silu2) {
     input->index(2) = 3.f;
     std::vector<std::shared_ptr<Tensor<float>>> inputs;
     std::vector<std::shared_ptr<Tensor<float>>> outputs;
-    inputs.push_back(input);
-    inputs.push_back(input);
-    inputs.push_back(input);
+    for (int i = 0; i < MAX_TEST_ITERATION; i++) {
+        inputs.push_back(input);
+    }
     sigmoid_layer->Forwards(inputs, outputs);
-    ASSERT_EQ(outputs.size(), 3);
+    ASSERT_EQ(outputs.size(), MAX_TEST_ITERATION);
     for (int i = 0; i < outputs.size(); ++i) {
         ASSERT_EQ(outputs.at(i)->index(0), -1 * 1 / (1 + std::exp(1.f)));
         ASSERT_EQ(outputs.at(i)->index(1), -2 * 1 / (1 + std::exp(2.f)));

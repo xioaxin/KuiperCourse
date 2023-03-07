@@ -25,6 +25,9 @@ namespace kuiper_infer {
         const uint32_t output_w = std::ceil(inputs[0]->cols() * scale_w);
         const UpSampleMode upSampleMode = this->op_->getUpSampleModel();
         outputs.clear();
+#ifdef OPENMP
+#pragma omp parallel for num_threads(batch_size)
+#endif
         for (uint32_t i = 0; i < batch_size; ++i) {
             auto input_data = inputs[i]->clone();
             std::shared_ptr<ftensor> output_data = std::make_shared<ftensor>(input_data->channels(), output_h, output_w);
@@ -45,6 +48,9 @@ namespace kuiper_infer {
                 }
                 output_data->at(j) = arma::conv_to<arma::fmat>::from(output_data_);
             }
+#ifdef OPENMP
+#pragma omp critical
+#endif
             outputs.push_back(output_data);
         }
     }
