@@ -7,7 +7,7 @@
 
 #include <vector>
 #include "data/tensor.hpp"
-#include <opencv2/opencv.hpp>
+//#include <opencv2/opencv.hpp>
 
 namespace kuiper_infer {
     class TransformBase {
