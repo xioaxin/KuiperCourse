@@ -36,9 +36,6 @@ namespace kuiper_infer {
         const uint32_t groups = this->op_->getGroups();
         const uint32_t batch = inputs.size();
         CHECK(batch > 0);
-#ifdef OPENMP
-#pragma omp parallel for
-#endif
         for (uint32_t i = 0; i < batch; i++) {
             const std::shared_ptr<ftensor> &input = inputs.at(i)->clone();
             CHECK(input != nullptr && !input->empty()) << "The input feature map of convolution layer is empty";

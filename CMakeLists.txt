@@ -16,15 +16,17 @@ endif (OPENMP)
 find_package(OpenMP REQUIRED)
 find_package(glog REQUIRED)
 find_package(benchmark REQUIRED)
+#find_package(OpenCV REQUIRED)
+
 include_directories(./include)
+#include_directories( ${OpenCV_INCLUDE_DIRS} )
 set(link_lib glog pthread gtest)
 set(link_math_lib armadillo blas lapack)
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
-
 add_executable(kuiper_course main.cpp)
-
 target_include_directories(kuiper_course PUBLIC /usr/include/armadillo_bits)
 target_include_directories(kuiper_course PUBLIC ${GTEST_INCLUDE_DIRS})
+#target_link_libraries(kuiper_course ${link_lib} ${link_math_lib} benchmark::benchmark OpenMP::OpenMP_CXX ${OpenCV_LIBS})
 target_link_libraries(kuiper_course ${link_lib} ${link_math_lib} benchmark::benchmark OpenMP::OpenMP_CXX)
 
 enable_testing()

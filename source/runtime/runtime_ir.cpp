@@ -8,6 +8,7 @@
 #include <deque>
 #include <utility>
 #include "factory/layer_factory.hpp"
+#include "ops/cat_op.h"
 
 namespace kuiper_infer {
     void RuntimeGraphShape::initOperatorInputTensor(
@@ -20,8 +21,7 @@ namespace kuiper_infer {
             if (op->input_operands.empty()) {
                 continue;
             } else {
-                const std::map<std::string, std::shared_ptr<RuntimeOperand>> &
-                        input_operands_map = op->input_operands;
+                const std::map<std::string, std::shared_ptr<RuntimeOperand>> &input_operands_map = op->input_operands;
                 for (const auto &input_operand_iter: input_operands_map) {
                     const auto &input_operand = input_operand_iter.second;
                     const auto &type = input_operand->type;
@@ -94,8 +94,8 @@ namespace kuiper_infer {
             } else if (kOperator->type == "pnnx.Output") {
                 this->output_operators_maps_.insert({kOperator->name, kOperator});
             } else {
-                // 以后的课中加layer的
-
+                // TODO: 以后的课中加layer的
+                kOperator->layer=LayerRegisterer::CreateLayer(std::make_shared<CatOperator>(1));
             }
         }
         RuntimeGraphShape::initOperatorInputTensor(operators_);
@@ -109,9 +109,6 @@ namespace kuiper_infer {
                                                      const std::vector<std::shared_ptr<RuntimeOperator>> &operators) {
         CHECK(!pnnx_operators.empty() && !operators.empty());
         CHECK(pnnx_operators.size() == operators.size());
-#ifdef OPENMP
-#pragma omp parallel for
-#endif
         for (uint32_t i = 0; i < pnnx_operators.size(); ++i) {
             const std::vector<pnnx::Operand *> operands = pnnx_operators.at(i)->outputs;
             CHECK(operands.size() <= 1) << "Only support one node one output yet!";
@@ -443,9 +440,6 @@ namespace kuiper_infer {
                 }
             }
         }
-#ifdef OPENMP
-#pragma omp parallel for
-#endif
         for (const auto &op: this->operators_) {
             op->meet_num = 0;
         }
@@ -455,6 +449,7 @@ namespace kuiper_infer {
         return output_operand->datas;
     }
 
+ // TODO：加强理解
     void RuntimeGraph::probeNextLayer(const std::shared_ptr<RuntimeOperator> &current_operator,
                                       std::deque<std::shared_ptr<RuntimeOperator>> &operator_queue,
                                       std::vector<std::shared_ptr<ftensor>> layer_output_data) {
@@ -487,9 +482,6 @@ namespace kuiper_infer {
     void RuntimeGraph::setOperatorInputData(std::vector<std::shared_ptr<ftensor>> &src,
                                             std::vector<std::vector<std::shared_ptr<ftensor>>> &dest) {
         CHECK(!src.empty() && !dest.empty()) << "Src or dest array is empty";
-#ifdef OPENMP
-#pragma omp parallel for
-#endif
         for (uint32_t j = 0; j < src.size(); j++) {
             const auto &src_data = src.at(j)->data();
             for (uint32_t i = 0; i < dest.size(); i++) {

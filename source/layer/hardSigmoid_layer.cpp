@@ -19,9 +19,6 @@ namespace kuiper_infer {
                         << "The operator of hardSigmoidLayer is illegal";
         CHECK(!inputs.empty()) << "The input of hardSigmoidLayer is empty";
         const uint32_t batch_size = inputs.size();
-#ifdef OPENMP
-#pragma omp parallel for
-#endif
         for (uint32_t i = 0; i < batch_size; ++i) {
             const auto input_data = inputs.at(i)->clone();
             CHECK(input_data != nullptr && !input_data->empty()) << "Input data of hardSigmoid is illegal";
@@ -31,9 +28,6 @@ namespace kuiper_infer {
                 if (value < 0)value = 0.f;
                 return value;
             });
-#ifdef OPENMP
-#pragma omp critical
-#endif
             outputs.push_back(input_data);
         }
     }

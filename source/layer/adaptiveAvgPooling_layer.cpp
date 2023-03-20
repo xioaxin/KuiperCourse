@@ -32,9 +32,6 @@ namespace kuiper_infer {
         const uint32_t stride_w = uint32_t(floor(input_cols / output_cols));
         const uint32_t kernel_h = input_rows - (output_rows - 1) * stride_h;
         const uint32_t kernel_w = input_cols - (output_cols - 1) * stride_w;
-#ifdef OPENMP
-#pragma omp parallel for
-#endif
         for (uint32_t i = 0; i < batch_size; i++) {
             std::shared_ptr<Tensor<float>> output_data = std::make_shared<Tensor<float>>(input_channels, output_rows,
                                                                                          output_cols);
@@ -49,9 +46,6 @@ namespace kuiper_infer {
                     }
                 }
             }
-#ifdef OPENMP
-#pragma omp critical
-#endif
             outputs.push_back(output_data);
         }
     }

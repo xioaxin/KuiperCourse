@@ -28,9 +28,6 @@ namespace kuiper_infer {
         const uint32_t packet_size = inputs.size() / output_size;
         uint32_t rows = inputs.front()->rows();
         uint32_t cols = inputs.front()->cols();
-#ifdef OPENMP
-#pragma omp parallel for
-#endif
         for (uint32_t i = 0; i < output_size; ++i) {
             std::shared_ptr<ftensor> output = outputs.at(i);
             uint32_t start_channel = 0;
@@ -48,7 +45,6 @@ namespace kuiper_infer {
                 for (uint32_t c = 0; c < in_channels; ++c) {
                     output->at(start_channel + c) = input->at(c);
                 }
-#pragma reduciton crition
                 start_channel += input->channels();
             }
         }

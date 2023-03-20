@@ -26,9 +26,6 @@ namespace kuiper_infer {
         const uint32_t output_feature = this->op_->getOutputFeature();
         CHECK(weight != nullptr && !weight->empty()) << "The weight of linear layer is empty";
         outputs.clear();
-#ifdef OPENMP
-#pragma omp parallel for
-#endif
         for (uint32_t i = 0; i < batch_size; i++) {
             auto input_data = inputs.at(i)->clone();
             CHECK(input_data->channels() == 1) << "The channel of input data must equal to 1";

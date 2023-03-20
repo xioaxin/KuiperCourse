@@ -5,7 +5,6 @@
 #include <gtest/gtest.h>
 #include "ops/softMax_op.h"
 #include "layer/softMax_layer.h"
-#include "factory/layer_factory.hpp"
 
 TEST(test_layer, forward_softMax1) {
     using namespace kuiper_infer;

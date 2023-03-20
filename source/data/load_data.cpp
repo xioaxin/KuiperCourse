@@ -12,26 +12,21 @@ namespace kuiper_infer {
         CHECK(!file_path.empty()) << "File path is empty!";
         std::ifstream in(file_path);
         CHECK(in.is_open() && in.good()) << "File open failed! " << file_path;
-
         std::string line_str;
         std::stringstream line_stream;
-
         const auto &[rows, cols] = CSVDataLoader::GetMatrixSize(in, split_char);
         CHECK(rows >= 1);
         std::shared_ptr<Tensor<float>> input_tensor = std::make_shared<Tensor<float>>(1, rows - 1, cols);
         arma::fmat &data = input_tensor->at(0);
-
         size_t row = 0;
         while (in.good()) {
             std::getline(in, line_str);
             if (line_str.empty()) {
                 break;
             }
-
             std::string token;
             line_stream.clear();
             line_stream.str(line_str);
-
             size_t col = 0;
             while (line_stream.good()) {
                 std::getline(line_stream, token, split_char);
@@ -52,7 +47,6 @@ namespace kuiper_infer {
                 col += 1;
                 CHECK(col <= cols) << "There are excessive elements on the column";
             }
-
             row += 1;
             CHECK(row <= rows) << "There are excessive elements on the row";
         }
@@ -63,25 +57,20 @@ namespace kuiper_infer {
         CHECK(!file_path.empty()) << "File path is empty!";
         std::ifstream in(file_path);
         CHECK(in.is_open() && in.good()) << "File open failed! " << file_path;
-
         std::string line_str;
         std::stringstream line_stream;
-
         const auto &[rows, cols] = CSVDataLoader::GetMatrixSize(in, split_char);
         std::shared_ptr<Tensor<float>> input_tensor = std::make_shared<Tensor<float>>(1, rows, cols);
         arma::fmat &data = input_tensor->at(0);
-
         size_t row = 0;
         while (in.good()) {
             std::getline(in, line_str);
             if (line_str.empty()) {
                 break;
             }
-
             std::string token;
             line_stream.clear();
             line_stream.str(line_str);
-
             size_t col = 0;
             while (line_stream.good()) {
                 std::getline(line_stream, token, split_char);
@@ -95,7 +84,6 @@ namespace kuiper_infer {
                 col += 1;
                 CHECK(col <= cols) << "There are excessive elements on the column";
             }
-
             row += 1;
             CHECK(row <= rows) << "There are excessive elements on the row";
         }
@@ -108,21 +96,17 @@ namespace kuiper_infer {
         size_t fn_rows = 0;
         size_t fn_cols = 0;
         const std::ifstream::pos_type start_pos = file.tellg();
-
         std::string token;
         std::string line_str;
         std::stringstream line_stream;
-
         while (file.good() && load_ok) {
             std::getline(file, line_str);
             if (line_str.empty()) {
                 break;
             }
-
             line_stream.clear();
             line_stream.str(line_str);
             size_t line_cols = 0;
-
             std::string row_token;
             while (line_stream.good()) {
                 std::getline(line_stream, row_token, split_char);
@@ -131,11 +115,27 @@ namespace kuiper_infer {
             if (line_cols > fn_cols) {
                 fn_cols = line_cols;
             }
-
             ++fn_rows;
         }
         file.clear();
         file.seekg(start_pos);
         return {fn_rows, fn_cols};
     }
+
+//    std::shared_ptr<Tensor<float>> ImageDataLoader::LoadData(const std::string &file_path) {
+//        CHECK(!file_path.empty()) << "The imag path is empty";
+//        struct stat buffer;
+//        CHECK((stat(file_path.c_str(), &buffer) == 0)) << "The path of image is illegal";
+//        cv::Mat image = cv::imread(file_path);
+//        std::shared_ptr<Tensor<float>> input_tensor = std::make_shared<Tensor<float>>(image.channels(), image.rows,
+//                                                                                      image.cols);
+//        for (int i = 0; i < image.rows; i++) {
+//            for (int j = 0; j < image.cols; j++) {
+//                for (int k = 0; k < image.channels(); k++) {
+//                    input_tensor->at(k, i, j) = image.at<cv::Vec3b>(i, j)[k];
+//                }
+//            }
+//        }
+//        return input_tensor;
+//    }
 }
