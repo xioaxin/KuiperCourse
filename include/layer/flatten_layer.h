@@ -6,17 +6,17 @@
 #define KUIPER_COURSE_FLATTEN_LAYER_H
 
 #include "layer.h"
-#include "factory/layer_factory.hpp"
 #include "ops/flatten_op.h"
 
 namespace kuiper_infer {
     class FlattenLayer : public Layer {
     public:
-        FlattenLayer(const std::shared_ptr<Operator> &op);
+        FlattenLayer(const std::shared_ptr<RuntimeOperator> &op);
         ~FlattenLayer() override = default;
         void Forwards(const std::vector<std::shared_ptr<Tensor<float>>> &inputs,
                       std::vector<std::shared_ptr<Tensor<float>>> &outputs);
-        static std::shared_ptr<Layer> CreateInstance(const std::shared_ptr<Operator> &op);
+        void Forwards() override;
+        static std::shared_ptr<Layer> CreateInstance(const std::shared_ptr<RuntimeOperator> &op);
     private:
         std::unique_ptr<FlattenOperator> op_;
     };

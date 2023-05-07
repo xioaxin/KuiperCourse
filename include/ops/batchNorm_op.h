@@ -8,13 +8,14 @@
 #include <vector>
 #include "data/load_data.hpp"
 #include "data/tensor.hpp"
-#include "ops.h"
 #include <cstdint>
-
+#include "factory/operator_factory.h"
 namespace kuiper_infer {
-    class BatchNormOperator : public Operator {
+    class BatchNormOperator : public RuntimeOperator {
     public:
-        ~BatchNormOperator() override = default;
+        BatchNormOperator();
+
+        ~BatchNormOperator() {};
         explicit BatchNormOperator(float eps);
         void setMeanValue(const sftensor &mean_value);
         void setVarValue(const sftensor &var_value);
@@ -26,6 +27,9 @@ namespace kuiper_infer {
         const sftensor getVarValue() const;
         const std::vector<float> getAffineAlpha() const;
         const std::vector<float> getAffineBata() const;
+        void initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) override;
+        void initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) override;
+        static std::shared_ptr<RuntimeOperator> CreateInstance(const std::string type);
     private:
         float eps_ = 1e-5;
         sftensor mean_value_;

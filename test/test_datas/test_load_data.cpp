@@ -46,20 +46,23 @@ TEST(test_data_load, load_csv_with_head1) {
         }
     }
 }
-//
-//TEST(test_data_load, load_image) {
-//    using namespace kuiper_infer;
-//    const std::string &file_path = "../tmp/1.jpg";
-//    cv::Mat image = cv::imread(file_path);
-//    std::shared_ptr<Tensor<float>> data = ImageDataLoader::LoadData(file_path);
-//    uint32_t index = 1;
-//    uint32_t rows = data->rows();
-//    uint32_t cols = data->cols();
-//    for (int i = 0; i < image.channels(); ++i) {
-//        for (uint32_t r = 0; r < rows; ++r) {
-//            for (uint32_t c = 0; c < cols; ++c) {
-//                ASSERT_EQ(data->at(i, r, c), image.at<cv::Vec3b>(r, c)[i]);
-//            }
-//        }
-//    }
-//}
+
+TEST(test_data_load, load_image) {
+    using namespace kuiper_infer;
+    const std::string &file_path = "../tmp/3.jpg";
+    struct stat buffer;
+    CHECK((stat(file_path.c_str(), &buffer) == 0)) << "The path of image is illegal";
+    cv::Mat image = cv::imread(file_path);
+    cv::cvtColor(image, image, cv::COLOR_BGR2RGB);
+    image.convertTo(image, CV_32FC3);
+    std::shared_ptr<Tensor<float>> data = ImageDataLoader::LoadData(file_path);
+    uint32_t rows = data->rows();
+    uint32_t cols = data->cols();
+    for (int i = 0; i < image.channels(); ++i) {
+        for (uint32_t r = 0; r < rows; ++r) {
+            for (uint32_t c = 0; c < cols; ++c) {
+                ASSERT_EQ(data->at(i, r, c), image.at<cv::Vec3f>(r, c)[i]) << r << " " << c << std::endl;
+            }
+        }
+    }
+}

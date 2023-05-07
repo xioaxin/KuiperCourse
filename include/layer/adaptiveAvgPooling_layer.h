@@ -6,16 +6,17 @@
 #define KUIPER_COURSE_ADAPTIVEAVGPOOLING_LAYER_H
 
 #include "layer.h"
-#include "ops/ops.h"
 #include "ops/adaptiveAvgPooling_op.h"
 
 namespace kuiper_infer {
     class AdaptiveAvgPoolingLayer : public Layer {
     public:
-        explicit AdaptiveAvgPoolingLayer(const std::shared_ptr<Operator> &op);
+        ~AdaptiveAvgPoolingLayer() override = default;
+        explicit AdaptiveAvgPoolingLayer(const std::shared_ptr<RuntimeOperator> &op);
         void Forwards(const std::vector<std::shared_ptr<Tensor<float>>> &inputs,
                       std::vector<std::shared_ptr<Tensor<float>>> &outputs) override;
-        static std::shared_ptr<Layer> CreateInstance(const std::shared_ptr<Operator> &op);
+        void Forwards() override;
+        static std::shared_ptr<Layer> CreateInstance(const std::shared_ptr<RuntimeOperator> &op);
     private:
         std::unique_ptr<AdaptiveAvgPoolingOperator> op_;
     };

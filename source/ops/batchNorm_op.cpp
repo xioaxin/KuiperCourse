@@ -4,8 +4,9 @@
 #include "ops/batchNorm_op.h"
 
 namespace kuiper_infer {
-    BatchNormOperator::BatchNormOperator(float eps) : Operator(OpType::kOperatorBatchNorm), eps_(eps) {
-    }
+    BatchNormOperator::BatchNormOperator() : RuntimeOperator(OpType::kOperatorBatchNorm) {}
+
+    BatchNormOperator::BatchNormOperator(float eps) : RuntimeOperator(OpType::kOperatorBatchNorm), eps_(eps) {}
 
     const std::vector<float> BatchNormOperator::getAffineAlpha() const {
         return affine_alpha_;
@@ -35,6 +36,12 @@ namespace kuiper_infer {
         this->affine_beta_ = affine_beta;
     }
 
+    void BatchNormOperator::initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) {
+    }
+
+    void BatchNormOperator::initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) {
+    }
+
     void BatchNormOperator::setEps(float eps) {
         this->eps_ = eps;
     }
@@ -46,4 +53,12 @@ namespace kuiper_infer {
     void BatchNormOperator::setVarValue(const sftensor &var_value) {
         this->var_value_ = var_value;
     }
+
+    std::shared_ptr<RuntimeOperator> BatchNormOperator::CreateInstance(const std::string type) {
+        CHECK(PNNX_TO_KUIPER_TABLE[type] == OpType::kOperatorBatchNorm);
+        std::shared_ptr<RuntimeOperator> batchNormOperator = std::make_shared<BatchNormOperator>();
+        return batchNormOperator;
+    }
+
+    RuntimeOperatorRegistererWrapper kBatchNormOperator(OpType::kOperatorBatchNorm, BatchNormOperator::CreateInstance);
 }

@@ -28,8 +28,7 @@ TEST(test_initinoutput, init_init_input) {
     }
     // 获取输入空间初始化后的Operator
     const auto &operators2 = graph.operators();
-    const auto &operators3 = std::vector<std::shared_ptr<RuntimeOperator>>(operators2.begin() + 1,
-                                                                           operators2.begin() + 5);
+    const auto &operators3 = std::vector<std::shared_ptr<RuntimeOperator>>(operators2.begin() + 1, operators2.begin() + 5);
 
     // 获取name为conv1 relu1的2个op进行校验
 

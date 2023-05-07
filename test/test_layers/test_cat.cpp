@@ -3,12 +3,13 @@
 //
 #include <glog/logging.h>
 #include <gtest/gtest.h>
+#include "ops/runtime_op.h"
 #include "ops/sigmoid_op.h"
 #include "layer/cat_layer.h"
 //单个batch
 TEST(test_layer, forward_cat1) {
     using namespace kuiper_infer;
-    std::shared_ptr<Operator> cat_op = std::make_shared<CatOperator>(1);
+    std::shared_ptr<RuntimeOperator> cat_op = std::make_shared<CatOperator>(1);
     std::vector<sftensor> inputs;
     arma::fmat input_data = "1,2,3;"
                             "5,6,7;"
@@ -36,7 +37,7 @@ TEST(test_layer, forward_cat1) {
 // 多个batch
 TEST(test_layer, forward_cat2) {
     using namespace kuiper_infer;
-    std::shared_ptr<Operator> cat_op = std::make_shared<CatOperator>(1);
+    std::shared_ptr<RuntimeOperator> cat_op = std::make_shared<CatOperator>(1);
     std::vector<sftensor> inputs;
     arma::fmat input_data = "1,2,3;"
                             "5,6,7;"

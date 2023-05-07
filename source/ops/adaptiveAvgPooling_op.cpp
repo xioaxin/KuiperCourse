@@ -1,25 +1,37 @@
 //
 // Created by zpx on 2023/02/21.
 //
+#include <utility>
+
 #include "ops/adaptiveAvgPooling_op.h"
 
 namespace kuiper_infer {
-    AdaptiveAvgPoolingOperator::AdaptiveAvgPoolingOperator(uint32_t output_h, uint32_t output_w)
-            : output_h_(output_h), output_w_(output_w), Operator(OpType::kOperatorAdaptiveAvgPooling) {}
+    AdaptiveAvgPoolingOperator::AdaptiveAvgPoolingOperator() : RuntimeOperator(OpType::kOperatorAdaptiveAvgPooling) {}
 
-    uint32_t AdaptiveAvgPoolingOperator::get_output_h() {
-        return output_h_;
+    AdaptiveAvgPoolingOperator::AdaptiveAvgPoolingOperator(std::vector<int> output_size) : RuntimeOperator(
+            OpType::kOperatorAdaptiveAvgPooling), output_size_(std::move(output_size)) {}
+
+    void AdaptiveAvgPoolingOperator::initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) {
+        CHECK(!runtimeParameter.empty()) << "The parameter of " << type << "is empty";
+        this->output_size_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("output_size"))->value;
     }
 
-    uint32_t AdaptiveAvgPoolingOperator::get_output_w() {
-        return output_w_;
+    void AdaptiveAvgPoolingOperator::initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) {
     }
 
-    void AdaptiveAvgPoolingOperator::set_output_h(uint32_t output_h) {
-        this->output_h_ = output_h;
+    std::shared_ptr<RuntimeOperator> AdaptiveAvgPoolingOperator::CreateInstance(const std::string type) {
+        CHECK(PNNX_TO_KUIPER_TABLE[type] == OpType::kOperatorAdaptiveAvgPooling);
+        std::shared_ptr<RuntimeOperator> adaptiveAvgPoolingOperator = std::make_shared<AdaptiveAvgPoolingOperator>();
+        return adaptiveAvgPoolingOperator;
     }
 
-    void AdaptiveAvgPoolingOperator::set_output_w(uint32_t output_w) {
-        this->output_w_ = output_w;
+    const std::vector<int> &AdaptiveAvgPoolingOperator::getOutputSize() const {
+        return output_size_;
     }
+
+    void AdaptiveAvgPoolingOperator::setOutputSize(const std::vector<int> &outputSize) {
+        output_size_ = outputSize;
+    }
+
+    RuntimeOperatorRegistererWrapper kAdaptiveAvgPoolingOperator(OpType::kOperatorAdaptiveAvgPooling, AdaptiveAvgPoolingOperator::CreateInstance);
 }

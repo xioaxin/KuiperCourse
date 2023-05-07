@@ -13,17 +13,15 @@ namespace kuiper_infer {
         registry.insert({op_type, creator});
     }
 
-    std::shared_ptr<Layer> LayerRegisterer::CreateLayer(const std::shared_ptr<Operator> &op) {
+    std::shared_ptr<Layer> LayerRegisterer::CreateLayer(const std::shared_ptr<RuntimeOperator> &op) {
         CreateRegistry &registry = Registry();
         const OpType op_type = op->op_type_;
-
         LOG_IF(FATAL, registry.count(op_type) <= 0) << "Can not find the layer type: " << int(op_type);
         const auto &creator = registry.find(op_type)->second;
         LOG_IF(FATAL, !creator) << "Layer creator is empty!";
-        std::shared_ptr<Layer> layer = creator(op);
-        LOG_IF(FATAL, !layer) << "Layer init failed!";
-        return layer;
+        return creator(op);
     }
+
     // 单例生成模型注册表（哈希表）
     LayerRegisterer::CreateRegistry &LayerRegisterer::Registry() {
         static CreateRegistry *kRegistry = new CreateRegistry();

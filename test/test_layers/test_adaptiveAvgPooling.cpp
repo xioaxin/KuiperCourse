@@ -3,17 +3,13 @@
 //
 #include <glog/logging.h>
 #include <gtest/gtest.h>
-#include "ops/ops.h"
 #include <cstdint>
 #include "ops/adaptiveAvgPooling_op.h"
-#include "layer/layer.h"
-#include "factory/layer_factory.hpp"
 
 TEST(test_layer, forward_adptiveAvgPooling1) {
     using namespace kuiper_infer;
-    uint32_t output_h = 4;
-    uint32_t output_w = 9;
-    std::shared_ptr<Operator> adaptive_avg_op = std::make_shared<AdaptiveAvgPoolingOperator>(output_h, output_w);
+    std::vector<int> output_size = {4, 9};
+    std::shared_ptr<RuntimeOperator> adaptive_avg_op = std::make_shared<AdaptiveAvgPoolingOperator>(output_size);
     std::shared_ptr<Layer> adaptive_avg_layer = LayerRegisterer::CreateLayer(adaptive_avg_op);
     CHECK(adaptive_avg_layer != nullptr);
     arma::fmat input_data = "1 1 1 2 2 2 3 3 3;"
@@ -22,9 +18,9 @@ TEST(test_layer, forward_adptiveAvgPooling1) {
                             "1 1 1 2 2 2 6 6 6;";
     std::shared_ptr<Tensor<float>> input = std::make_shared<Tensor<float>>(1, input_data.n_rows, input_data.n_cols);
     input->at(0) = input_data;
-    std::vector<std::shared_ptr<Tensor<float>>> inputs;
-    std::vector<std::shared_ptr<Tensor<float>>> outputs;
-    inputs.push_back(input);
+    std::vector<std::shared_ptr<Tensor<float>>> inputs(1);
+    std::vector<std::shared_ptr<Tensor<float>>> outputs(1);
+    inputs[0] = input;
     adaptive_avg_layer->Forwards(inputs, outputs);
     ASSERT_EQ(outputs.size(), 1);
     const auto &output = outputs.at(0);
@@ -40,9 +36,8 @@ TEST(test_layer, forward_adptiveAvgPooling1) {
 
 TEST(test_layer, forward_adptiveAvgPooling2) {
     using namespace kuiper_infer;
-    uint32_t output_h = 3;
-    uint32_t output_w = 3;
-    std::shared_ptr<Operator> adaptive_avg_op = std::make_shared<AdaptiveAvgPoolingOperator>(output_h, output_w);
+    std::vector<int> output_size = {3, 3};
+    std::shared_ptr<RuntimeOperator> adaptive_avg_op = std::make_shared<AdaptiveAvgPoolingOperator>(output_size);
     std::shared_ptr<Layer> adaptive_avg_layer = LayerRegisterer::CreateLayer(adaptive_avg_op);
     CHECK(adaptive_avg_layer != nullptr);
     arma::fmat input_data = "1 2 1 2 2 2 3 3 3;"
@@ -51,10 +46,10 @@ TEST(test_layer, forward_adptiveAvgPooling2) {
                             "1 5 1 2 21 2 6 6 21;";
     std::shared_ptr<Tensor<float>> input = std::make_shared<Tensor<float>>(1, input_data.n_rows, input_data.n_cols);
     input->at(0) = input_data;
-    std::vector<std::shared_ptr<Tensor<float>>> inputs;
-    std::vector<std::shared_ptr<Tensor<float>>> outputs;
+    std::vector<std::shared_ptr<Tensor<float>>> inputs(50);
+    std::vector<std::shared_ptr<Tensor<float>>> outputs(50);
     for (int i = 0; i < 50; ++i) {
-        inputs.push_back(input);
+        inputs[i] = input;
     }
     adaptive_avg_layer->Forwards(inputs, outputs);
     ASSERT_EQ(outputs.size(), 50);

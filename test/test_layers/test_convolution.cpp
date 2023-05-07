@@ -1,20 +1,16 @@
 //
 // Created by zpx on 2023/02/22.
 //
-//
-// Created by fss on 23-2-2.
-//
-
 #include <gtest/gtest.h>
 #include <glog/logging.h>
-#include "ops/ops.h"
+#include "ops/runtime_op.h"
 #include "layer/convolution_layer.h"
 
 // 单卷积单通道
 TEST(test_layer, conv1) {
     using namespace kuiper_infer;
     LOG(INFO) << "My convolution test!";
-    ConvolutionOperator *conv_op = new ConvolutionOperator(false, 1, 1, 1, 0, 0);
+    std::shared_ptr<ConvolutionOperator> conv_op = std::make_shared<ConvolutionOperator>(1, 1);
     // 单个卷积核的情况
     std::vector<float> values;
     for (int i = 0; i < 3; ++i) {
@@ -32,7 +28,7 @@ TEST(test_layer, conv1) {
     std::vector<sftensor> weights;
     weights.push_back(weight1);
     conv_op->setWeights(weights);
-    std::shared_ptr<Operator> op = std::shared_ptr<ConvolutionOperator>(conv_op);
+    std::shared_ptr<RuntimeOperator> op = std::shared_ptr<ConvolutionOperator>(conv_op);
     std::vector<std::shared_ptr<ftensor >> inputs;
     arma::fmat input_data = "1,2,3,4;"
                             "5,6,7,8;"
@@ -60,7 +56,7 @@ TEST(test_layer, conv1) {
 TEST(test_layer, conv2) {
     using namespace kuiper_infer;
     LOG(INFO) << "My convolution test!";
-    ConvolutionOperator *conv_op = new ConvolutionOperator(false, 1, 1, 1, 0, 0);
+    std::shared_ptr<ConvolutionOperator> conv_op = std::make_shared<ConvolutionOperator>(1, 1);
     // 单个卷积核的情况
     std::vector<float> values;
     arma::fmat weight_data = "1 ,1, 1 ;"
@@ -83,7 +79,7 @@ TEST(test_layer, conv2) {
     weights.push_back(weight2);
     weights.push_back(weight3);
     conv_op->setWeights(weights);
-    std::shared_ptr<Operator> op = std::shared_ptr<ConvolutionOperator>(conv_op);
+    std::shared_ptr<RuntimeOperator> op = std::shared_ptr<ConvolutionOperator>(conv_op);
     std::vector<std::shared_ptr<ftensor >> inputs;
     arma::fmat input_data = "1,2,3,4;"
                             "5,6,7,8;"

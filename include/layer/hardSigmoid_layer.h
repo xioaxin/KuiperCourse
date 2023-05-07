@@ -12,11 +12,12 @@
 namespace kuiper_infer {
     class HardSigmoidLayer : public Layer {
     public:
-        explicit HardSigmoidLayer(const std::shared_ptr<Operator> &op);
+        explicit HardSigmoidLayer(const std::shared_ptr<RuntimeOperator> &op);
         ~HardSigmoidLayer() override = default;
         void Forwards(const std::vector<std::shared_ptr<Tensor<float>>> &inputs,
-                      std::vector<std::shared_ptr<Tensor<float>>> &outputs);
-        static std::shared_ptr<Layer> CreateInstance(const std::shared_ptr<Operator> &op);
+                      std::vector<std::shared_ptr<Tensor<float>>> &outputs) override;
+        void Forwards() override;
+        static std::shared_ptr<Layer> CreateInstance(const std::shared_ptr<RuntimeOperator> &op);
     private:
         std::unique_ptr<HardSigmoidOperator> op_;
     };

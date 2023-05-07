@@ -6,33 +6,36 @@
 #define KUIPER_COURSE_MAXPOOLING_OP_H
 
 #include <cstdint>
-#include "ops/ops.h"
+#include <map>
+#include "factory/operator_factory.h"
 
 namespace kuiper_infer {
-    class MaxPoolingOperator : public Operator {
+    class MaxPoolingOperator : public RuntimeOperator {
     public:
-        ~MaxPoolingOperator() override = default;
-        explicit MaxPoolingOperator(uint32_t pooling_h, uint32_t pooling_w, uint32_t stride_h,
-                                    uint32_t stride_w, uint32_t padding_h, uint32_t padding_w);
-        void set_pooling_h(uint32_t pool_h);
-        void set_pooling_w(uint32_t pool_w);
-        void set_stride_h(uint32_t stride_h);
-        void set_stride_w(uint32_t stride_w);
-        void set_padding_h(uint32_t padding_h);
-        void set_padding_w(uint32_t padding_w);
-        uint32_t get_pooling_h();
-        uint32_t get_pooling_w();
-        uint32_t get_stride_h();
-        uint32_t get_stride_w();
-        uint32_t get_padding_h();
-        uint32_t get_padding_w();
+        MaxPoolingOperator();
+
+        ~MaxPoolingOperator() override {};
+        explicit MaxPoolingOperator(std::vector<int> &kernel_size, std::vector<int> &padding_size,
+                                    std::vector<int> &stride, std::vector<int> &dilation);
+        void initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) override;
+        void
+        initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) override;
+        static std::shared_ptr<RuntimeOperator> CreateInstance(std::string type);
     private:
-        uint32_t pooling_h_;
-        uint32_t pooling_w_;
-        uint32_t stride_h_;
-        uint32_t stride_w_;
-        uint32_t padding_h_;
-        uint32_t padding_w_;
+        std::vector<int> kernel_size_;
+        std::vector<int> padding_size_;
+        std::vector<int> stride_;
+    public:
+        const std::vector<int> &getKernelSize() const;
+        void setKernelSize(const std::vector<int> &kernelSize);
+        const std::vector<int> &getPaddingSize() const;
+        void setPaddingSize(const std::vector<int> &paddingSize);
+        const std::vector<int> &getStride() const;
+        void setStride(const std::vector<int> &stride);
+        const std::vector<int> &getDilation() const;
+        void setDilation(const std::vector<int> &dilation);
+    private:
+        std::vector<int> dilation_;
     };
 }
 #endif //KUIPER_COURSE_MAXPOOLING_OP_H

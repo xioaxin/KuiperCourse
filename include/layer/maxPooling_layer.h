@@ -11,10 +11,11 @@
 namespace kuiper_infer {
     class MaxPoolingLayer : public Layer {
     public:
-        explicit MaxPoolingLayer(const std::shared_ptr<Operator> &op);
+        explicit MaxPoolingLayer(const std::shared_ptr<RuntimeOperator> &op);
         void Forwards(const std::vector<std::shared_ptr<Tensor<float>>> &inputs,
                       std::vector<std::shared_ptr<Tensor<float>>> &outputs) override;
-        static std::shared_ptr<Layer> CreateInstance(const std::shared_ptr<Operator> &op);
+        void Forwards() override;
+        static std::shared_ptr<Layer> CreateInstance(const std::shared_ptr<RuntimeOperator> &op);
     private:
         std::unique_ptr<MaxPoolingOperator> op_;
     };

@@ -6,22 +6,23 @@
 #define KUIPER_COURSE_ADAPTIVEAVGPOOLING_H
 
 #include "layer/layer.h"
-#include "ops.h"
 #include <cstdint>
-#include "ops/ops.h"
+#include "factory/operator_factory.h"
 
 namespace kuiper_infer {
-    class AdaptiveMaxPoolingOperator : public Operator {
+    class AdaptiveMaxPoolingOperator : public RuntimeOperator {
     public:
-        ~AdaptiveMaxPoolingOperator() override = default;
-        explicit AdaptiveMaxPoolingOperator(uint32_t output_h, uint32_t output_w);
-        void set_output_h(uint32_t output_h);
-        void set_output_w(uint32_t output_w);
-        uint32_t get_output_h();
-        uint32_t get_output_w();
+        ~AdaptiveMaxPoolingOperator() {};
+        AdaptiveMaxPoolingOperator();
+        explicit AdaptiveMaxPoolingOperator(std::vector<int> output_size);
+        const std::vector<int> &getOutputSize() const;
+        void setOutputSize(const std::vector<int> &outputSize);
+        void initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) override;
+        void
+        initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) override;
+        static std::shared_ptr<RuntimeOperator> CreateInstance(const std::string type);
     private:
-        uint32_t output_h_;
-        uint32_t output_w_;
+        std::vector<int> output_size_;
     };
 }
 #endif //KUIPER_COURSE_ADAPTIVEAVGPOOLING_H

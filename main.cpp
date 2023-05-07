@@ -2,23 +2,19 @@
 #include "iostream"
 #include <armadillo>
 #include <benchmark/benchmark.h>
+#include <opencv2/opencv.hpp>
 
 using namespace std;
 using namespace arma;
 
 int main() {
-    vec x = regspace(1, 4);
-    for (auto item: x)cout << item << " ";
-    cout << endl;
-    vec y = square(x);
-    for (auto item: y)cout << item << " ";
-    cout << endl;
-    vec xx = regspace(x.min(), 0.5, x.max());
-    for (auto item: xx)cout << item << " ";
-    cout << endl;
-    vec yy;
-    interp1(x, y, xx, yy);  // use linear interpolation by default
-    for (auto item: yy)cout << item << " ";
-    cout << endl;
+    mat A(5, 5, fill::zeros);
+    mat B = arma::exp(A);
+    for (int i = 0; i < B.n_rows; ++i) {
+        for (int j = 0; j < B.n_cols; ++j) {
+            cout << B.at(i, j) << " ";
+        }
+        cout << endl;
+    }
     return 0;
 }

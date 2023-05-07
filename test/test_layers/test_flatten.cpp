@@ -8,8 +8,8 @@
 
 TEST(test_layer, flatten1) {
     using namespace kuiper_infer;
-    std::shared_ptr<Operator> flatten_op = std::make_shared<FlattenOperator>(0, 1);
-    std::vector<sftensor> inputs;
+    std::shared_ptr<RuntimeOperator> flatten_op = std::make_shared<FlattenOperator>(0, 1);
+    std::vector<sftensor> inputs(1);
     arma::fmat input_data = "1,2,3;"
                             "5,6,7;"
                             "7,8,9;";
@@ -17,13 +17,11 @@ TEST(test_layer, flatten1) {
     input->at(0) = input_data;
     input->at(1) = input_data;
     input->at(2) = input_data;
-    inputs.push_back(input);
-    inputs.push_back(input);
-    inputs.push_back(input);
-    std::vector<std::shared_ptr<Tensor<float>>> outputs; //放结果
+    inputs[0] = input;
+    std::vector<std::shared_ptr<Tensor<float>>> outputs(1); //放结果
     FlattenLayer layer(flatten_op);
     layer.Forwards(inputs, outputs);
-    ASSERT_EQ(outputs.size(), 3);
+    ASSERT_EQ(outputs.size(), 1);
     for (int i = 0; i < outputs.size(); ++i) {
 #ifdef DEBUG
         outputs[i]->show();
@@ -37,8 +35,8 @@ TEST(test_layer, flatten1) {
 
 TEST(test_layer, flatten2) {
     using namespace kuiper_infer;
-    std::shared_ptr<Operator> flatten_op = std::make_shared<FlattenOperator>(0, 2);
-    std::vector<sftensor> inputs;
+    std::shared_ptr<RuntimeOperator> flatten_op = std::make_shared<FlattenOperator>(0, 2);
+    std::vector<sftensor> inputs(MAX_TEST_ITERATION);
     arma::fmat input_data = "1,2,3;"
                             "5,6,7;"
                             "7,8,9;";
@@ -47,9 +45,9 @@ TEST(test_layer, flatten2) {
     input->at(1) = input_data;
     input->at(2) = input_data;
     for (int i = 0; i < MAX_TEST_ITERATION; ++i) {
-        inputs.push_back(input);
+        inputs[i] = input;
     }
-    std::vector<std::shared_ptr<Tensor<float>>> outputs; //放结果
+    std::vector<std::shared_ptr<Tensor<float>>> outputs(MAX_TEST_ITERATION); //放结果
     FlattenLayer layer(flatten_op);
     layer.Forwards(inputs, outputs);
     ASSERT_EQ(outputs.size(), MAX_TEST_ITERATION);

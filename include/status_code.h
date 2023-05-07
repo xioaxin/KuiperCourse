@@ -15,6 +15,7 @@ namespace kuiper_infer {
         kParameterIntArray = 5,
         kParameterFloatArray = 6,
         kParameterStringArray = 7,
+        kParameterDelete = 8,
     };
 
     enum class InferStatus {

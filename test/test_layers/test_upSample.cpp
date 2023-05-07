@@ -3,23 +3,20 @@
 //
 #include <glog/logging.h>
 #include <gtest/gtest.h>
-#include "ops/ops.h"
 #include "ops/upSample_op.h"
-#include "layer/layer.h"
-#include "factory/layer_factory.hpp"
 
 TEST(test_layer, upsample_Layer1) {
     using namespace kuiper_infer;
-    std::shared_ptr<Operator> upSample_op = std::make_shared<UpSampleOperator>(2.0, 2.0, UpSampleMode::kModelNearest);
+    std::shared_ptr<RuntimeOperator> upSample_op = std::make_shared<UpSampleOperator>(2.0, 2.0, UpSampleMode::kModelNearest);
     std::shared_ptr<Layer> upSample_layer = LayerRegisterer::CreateLayer(upSample_op);
     CHECK(upSample_layer != nullptr);
     arma::fmat input_data = "1 2;"
                             "3 4;";
     std::shared_ptr<Tensor<float>> input = std::make_shared<Tensor<float>>(1, input_data.n_rows, input_data.n_cols);
     input->at(0) = input_data;
-    std::vector<std::shared_ptr<Tensor<float>>> inputs;
-    std::vector<std::shared_ptr<Tensor<float>>> outputs;
-    inputs.push_back(input);
+    std::vector<std::shared_ptr<Tensor<float>>> inputs(1);
+    std::vector<std::shared_ptr<Tensor<float>>> outputs(1);
+    inputs[0] = input;
     upSample_layer->Forwards(inputs, outputs);
     ASSERT_EQ(outputs.size(), 1);
 #ifdef DEBUG
@@ -37,7 +34,7 @@ TEST(test_layer, upsample_Layer1) {
 
 TEST(test_layer, upsample_Layer2) {
     using namespace kuiper_infer;
-    std::shared_ptr<Operator> upSample_op = std::make_shared<UpSampleOperator>(2.0, 2.0, UpSampleMode::kModelNearest);
+    std::shared_ptr<RuntimeOperator> upSample_op = std::make_shared<UpSampleOperator>(2.0, 2.0, UpSampleMode::kModelNearest);
     std::shared_ptr<Layer> upSample_layer = LayerRegisterer::CreateLayer(upSample_op);
     CHECK(upSample_layer != nullptr);
     arma::fmat input_data = "1,2,5;"
@@ -45,9 +42,9 @@ TEST(test_layer, upsample_Layer2) {
                             "7,8,9";
     std::shared_ptr<Tensor<float>> input = std::make_shared<Tensor<float>>(1, input_data.n_rows, input_data.n_cols);
     input->at(0) = input_data;
-    std::vector<std::shared_ptr<Tensor<float>>> inputs;
-    std::vector<std::shared_ptr<Tensor<float>>> outputs;
-    inputs.push_back(input);
+    std::vector<std::shared_ptr<Tensor<float>>> inputs(1);
+    std::vector<std::shared_ptr<Tensor<float>>> outputs(1);
+    inputs[0]=input;
     upSample_layer->Forwards(inputs, outputs);
     ASSERT_EQ(outputs.size(), 1);
 #ifdef DEBUG
@@ -66,7 +63,7 @@ TEST(test_layer, upsample_Layer2) {
 
 TEST(test_layer, upsample_Layer3) {
     using namespace kuiper_infer;
-    std::shared_ptr<Operator> upSample_op = std::make_shared<UpSampleOperator>(2.0, 2.0, UpSampleMode::kModelNearest);
+    std::shared_ptr<RuntimeOperator> upSample_op = std::make_shared<UpSampleOperator>(2.0, 2.0, UpSampleMode::kModelNearest);
     std::shared_ptr<Layer> upSample_layer = LayerRegisterer::CreateLayer(upSample_op);
     CHECK(upSample_layer != nullptr);
     arma::fmat input_data = "1,2,5;"
@@ -74,10 +71,10 @@ TEST(test_layer, upsample_Layer3) {
                             "7,8,9";
     std::shared_ptr<Tensor<float>> input = std::make_shared<Tensor<float>>(1, input_data.n_rows, input_data.n_cols);
     input->at(0) = input_data;
-    std::vector<std::shared_ptr<Tensor<float>>> inputs;
-    std::vector<std::shared_ptr<Tensor<float>>> outputs;
+    std::vector<std::shared_ptr<Tensor<float>>> inputs(50);
+    std::vector<std::shared_ptr<Tensor<float>>> outputs(50);
     for (int i = 0; i < 50; i++) {
-        inputs.push_back(input);
+        inputs[i] = input;
     }
     upSample_layer->Forwards(inputs, outputs);
     ASSERT_EQ(outputs.size(), 50);
@@ -99,7 +96,7 @@ TEST(test_layer, upsample_Layer3) {
 
 TEST(test_layer, upsample_Layer4) {
     using namespace kuiper_infer;
-    std::shared_ptr<Operator> upSample_op = std::make_shared<UpSampleOperator>(1.5, 1.5, UpSampleMode::kModelNearest);
+    std::shared_ptr<RuntimeOperator> upSample_op = std::make_shared<UpSampleOperator>(1.5, 1.5, UpSampleMode::kModelNearest);
     std::shared_ptr<Layer> upSample_layer = LayerRegisterer::CreateLayer(upSample_op);
     CHECK(upSample_layer != nullptr);
     arma::fmat input_data = "1,2,5;"
@@ -107,11 +104,11 @@ TEST(test_layer, upsample_Layer4) {
                             "7,8,9";
     std::shared_ptr<Tensor<float>> input = std::make_shared<Tensor<float>>(1, input_data.n_rows, input_data.n_cols);
     input->at(0) = input_data;
-    std::vector<std::shared_ptr<Tensor<float>>> inputs;
-    std::vector<std::shared_ptr<Tensor<float>>> outputs;
-    inputs.push_back(input);
-    inputs.push_back(input);
-    inputs.push_back(input);
+    std::vector<std::shared_ptr<Tensor<float>>> inputs(3);
+    std::vector<std::shared_ptr<Tensor<float>>> outputs(3);
+    for (int i = 0; i <3 ; ++i) {
+        inputs[i]=input;
+    }
     upSample_layer->Forwards(inputs, outputs);
     ASSERT_EQ(outputs.size(), 3);
 #ifdef DEBUG

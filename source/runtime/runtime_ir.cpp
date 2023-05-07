@@ -7,7 +7,6 @@
 #include <queue>
 #include <deque>
 #include <utility>
-#include "factory/layer_factory.hpp"
 #include "ops/cat_op.h"
 
 namespace kuiper_infer {
@@ -77,6 +76,62 @@ namespace kuiper_infer {
         }
     }
 
+    RuntimeGraph::RuntimeGraph(std::string param_path, std::string bin_path) :
+            param_path_(param_path), bin_path_(bin_path) {};
+
+    bool RuntimeGraph::init() {
+        if (bin_path_.empty() || param_path_.empty()) {
+            LOG(ERROR) << "The bin path or param path is empty";
+            return false;
+        }
+        this->graph_ = std::make_unique<pnnx::Graph>(); // 定义计算图
+        int load_result = this->graph_->load(param_path_, bin_path_); // 加载模型属性文件和参数文件
+        if (load_result != 0) {
+            LOG(ERROR) << "Load param path and bin path error: " << param_path_ << " " << bin_path_;
+            return false;
+        }
+        std::vector<pnnx::Operator *> operators = this->graph_->ops;
+        if (operators.empty()) {
+            LOG(ERROR) << "Can not read the layers' define";
+            return false;
+        }
+        this->operators_.clear();
+        for (const pnnx::Operator *op: operators) {
+            if (!op) {
+                LOG(ERROR) << "meet the empty node";
+                continue;
+            } else {
+                std::shared_ptr<RuntimeOperator> runtimeOperator = RuntimeOperatorRegisterer::CreateRuntimeOperator(op->type);
+                // 初始化算子名称和类型
+                runtimeOperator->name = op->name;
+                runtimeOperator->type = op->type;
+                // 初始化算子的input
+                const std::vector<pnnx::Operand *> &inputs = op->inputs;
+                if (!inputs.empty()) initInputOperators(inputs, runtimeOperator);
+                const std::vector<pnnx::Operand *> &outputs = op->outputs;
+                if (!outputs.empty())initOutputOperators(outputs, runtimeOperator);
+                const std::map<std::string, pnnx::Attribute> &attrs = op->attrs;
+                if (!attrs.empty())initGraphAttrs(attrs, runtimeOperator);
+                const std::map<std::string, pnnx::Parameter> &params = op->params;
+                if (!params.empty())initGraphParams(params, runtimeOperator);
+                this->operators_.push_back(runtimeOperator);
+            }
+        }
+        for (const auto &current_operator: this->operators_) {
+            const std::vector<std::string> &output_names = current_operator->output_names;
+            for (const auto &next_operator: this->operators_) {
+                if (next_operator == current_operator) {
+                    continue;
+                }
+                if (std::find(output_names.begin(), output_names.end(), next_operator->name) != output_names.end()) {
+                    current_operator->output_operators.insert({next_operator->name, next_operator});
+                }
+            }
+        }
+        graphState_ = GraphState::NeedBuild;
+        return true;
+    }
+
     void RuntimeGraph::build(const std::string &input_name, const std::string &output_name) {
         if (graphState_ == GraphState::NeedInit) {
             bool init_graph = init();
@@ -94,8 +149,9 @@ namespace kuiper_infer {
             } else if (kOperator->type == "pnnx.Output") {
                 this->output_operators_maps_.insert({kOperator->name, kOperator});
             } else {
-                // TODO: 以后的课中加layer的
-                kOperator->layer=LayerRegisterer::CreateLayer(std::make_shared<CatOperator>(1));
+                kOperator->initialParameter(kOperator->params);
+                kOperator->initialAttribute(kOperator->attribute);
+                kOperator->layer = LayerRegisterer::CreateLayer(kOperator);
             }
         }
         RuntimeGraphShape::initOperatorInputTensor(operators_);
@@ -127,8 +183,7 @@ namespace kuiper_infer {
                   operand_shapes.size() == 3)
                             << "Unsupported shape sizes: " << operand_shapes.size();
             if (!output_tensors) {
-                std::shared_ptr<RuntimeOperand> output_operand =
-                        std::make_shared<RuntimeOperand>();
+                std::shared_ptr<RuntimeOperand> output_operand = std::make_shared<RuntimeOperand>();
                 output_operand->shapes = operand_shapes;
                 output_operand->type = RuntimeDataType::KTypeFloat32;
                 output_operand->name = operand->name + "_output";
@@ -190,9 +245,6 @@ namespace kuiper_infer {
         }
     }
 
-    RuntimeGraph::RuntimeGraph(std::string param_path, std::string bin_path) :
-            param_path_(param_path), bin_path_(bin_path) {};
-
     void RuntimeGraph::set_bin_path(const std::string &bin_path) {
         bin_path_ = bin_path;
     }
@@ -207,59 +259,6 @@ namespace kuiper_infer {
 
     const std::string &RuntimeGraph::bin_path() const {
         return bin_path_;
-    }
-
-    bool RuntimeGraph::init() {
-        if (bin_path_.empty() || param_path_.empty()) {
-            LOG(ERROR) << "The bin path or param path is empty";
-            return false;
-        }
-        this->graph_ = std::make_unique<pnnx::Graph>(); // 定义计算图
-        int load_result = this->graph_->load(param_path_, bin_path_); // 加载模型属性文件和参数文件
-        if (load_result != 0) {
-            LOG(ERROR) << "Load param path and bin path error: " << param_path_ << " " << bin_path_;
-            return false;
-        }
-        std::vector<pnnx::Operator *> operators = this->graph_->ops;
-        if (operators.empty()) {
-            LOG(ERROR) << "Can not read the layers' define";
-            return false;
-        }
-        this->operators_.clear();
-        for (const pnnx::Operator *op: operators) {
-            if (!op) {
-                LOG(ERROR) << "meet the empty node";
-                continue;
-            } else {
-                std::shared_ptr<RuntimeOperator> runtimeOperator = std::make_shared<RuntimeOperator>();
-                // 初始化算子名称和类型
-                runtimeOperator->name = op->name;
-                runtimeOperator->type = op->type;
-                // 初始化算子的input
-                const std::vector<pnnx::Operand *> &inputs = op->inputs;
-                if (!inputs.empty()) initInputOperators(inputs, runtimeOperator);
-                const std::vector<pnnx::Operand *> &outputs = op->outputs;
-                if (!outputs.empty())initOutputOperators(outputs, runtimeOperator);
-                const std::map<std::string, pnnx::Attribute> &attrs = op->attrs;
-                if (!attrs.empty())initGraphAttrs(attrs, runtimeOperator);
-                const std::map<std::string, pnnx::Parameter> &params = op->params;
-                if (!params.empty())initGraphParams(params, runtimeOperator);
-                this->operators_.push_back(runtimeOperator);
-            }
-        }
-        for (const auto &current_operator: this->operators_) {
-            const std::vector<std::string> &output_names = current_operator->output_names;
-            for (const auto &next_operator: this->operators_) {
-                if (next_operator == current_operator) {
-                    continue;
-                }
-                if (std::find(output_names.begin(), output_names.end(), next_operator->name) != output_names.end()) {
-                    current_operator->output_operators.insert({next_operator->name, next_operator});
-                }
-            }
-        }
-        graphState_ = GraphState::NeedBuild;
-        return true;
     }
 
     void RuntimeGraph::initInputOperators(const std::vector<pnnx::Operand *> &inputs,
@@ -382,7 +381,6 @@ namespace kuiper_infer {
         return this->operators_;
     }
 
-    //TODO: 待理解
     std::vector<std::shared_ptr<ftensor>>
     RuntimeGraph::forward(const std::vector<std::shared_ptr<ftensor>> &inputs, bool debug) {
         if (graphState_ < GraphState::Complete) {
@@ -420,6 +418,7 @@ namespace kuiper_infer {
                         LOG(FATAL) << "Current operator is not ready!";
                         break;
                     } else {
+                        current_operator->layer->Forwards();
                         operator_queue.push_back(current_operator);
                     }
                 }
@@ -433,6 +432,7 @@ namespace kuiper_infer {
                 CHECK(!layer_input_datas.empty()) << "Layer input data is empty";
                 CHECK(current_operator->output_operands != nullptr && !current_operator->output_operands->datas.empty())
                                 << "Layer output data is empty";
+                current_operator->layer->Forwards(layer_input_datas, current_operator->output_operands->datas);
                 const auto &start = std::chrono::steady_clock::now();
                 probeNextLayer(current_operator, operator_queue, current_operator->output_operands->datas);
                 if (debug) {
@@ -445,11 +445,10 @@ namespace kuiper_infer {
         }
         CHECK(output_operator->input_operands.size() == 1) << "The graph only support one path to the output node yet!";
         const auto &output_operator_operand = output_operator->input_operands.begin();
-        const auto &output_operand = output_operator_operand->second;
+        const auto &output_operand = std::move(output_operator_operand->second);
         return output_operand->datas;
     }
 
- // TODO：加强理解
     void RuntimeGraph::probeNextLayer(const std::shared_ptr<RuntimeOperator> &current_operator,
                                       std::deque<std::shared_ptr<RuntimeOperator>> &operator_queue,
                                       std::vector<std::shared_ptr<ftensor>> layer_output_data) {
@@ -459,8 +458,7 @@ namespace kuiper_infer {
             const auto &next_rt_operator = next_operator.second;
             const auto &next_input_operands = next_rt_operator->input_operands;
             if (next_input_operands.find(current_operator->name) != next_input_operands.end()) {
-                std::vector<std::shared_ptr<ftensor>> next_input_datas = next_input_operands.at(
-                        current_operator->name)->datas;
+                std::vector<std::shared_ptr<ftensor>> next_input_datas = next_input_operands.at(current_operator->name)->datas;
                 next_input_data_arr.push_back(next_input_datas);
                 next_rt_operator->meet_num += 1;
                 if (std::find(operator_queue.begin(), operator_queue.end(), next_rt_operator) == operator_queue.end()) {

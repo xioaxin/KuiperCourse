@@ -7,15 +7,15 @@
 
 #include "ops/linear_op.h"
 #include "layer.h"
-#include "factory/layer_factory.hpp"
 
 namespace kuiper_infer {
     class LinearLayer : public Layer {
     public:
-        LinearLayer(const std::shared_ptr<Operator> &op);
+        LinearLayer(const std::shared_ptr<RuntimeOperator> &op);
         void Forwards(const std::vector<std::shared_ptr<Tensor<float>>> &inputs,
-                      std::vector<std::shared_ptr<Tensor<float>>> &outputs);
-        static std::shared_ptr<Layer> CreateInstance(const std::shared_ptr<Operator> &op);
+                      std::vector<std::shared_ptr<Tensor<float>>> &outputs) override;
+        void Forwards() override;
+        static std::shared_ptr<Layer> CreateInstance(const std::shared_ptr<RuntimeOperator> &op);
     private:
         std::unique_ptr<LinearOperator> op_;
     };

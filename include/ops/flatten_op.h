@@ -5,21 +5,29 @@
 #ifndef KUIPER_COURSE_FLATTEN_H
 #define KUIPER_COURSE_FLATTEN_H
 
-#include "ops.h"
 #include <cstdint>
+#include <map>
+#include "factory/operator_factory.h"
 
 namespace kuiper_infer {
-    class FlattenOperator : public Operator {
+    class FlattenOperator : public RuntimeOperator {
     public:
-        explicit FlattenOperator(uint32_t start_dim, uint32_t end_dim);
-        ~FlattenOperator() override = default;
-        void setStartDim(const uint32_t start_dim);
-        void setEndDim(const uint32_t end_dim);
-        const uint32_t getStartDim() const;
-        const uint32_t getEndDim() const;
+        FlattenOperator();
+        explicit FlattenOperator(int start_dim, int end_dim);
+
+        ~FlattenOperator() {};
+        void initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) override;
+        void initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) override;
+        static std::shared_ptr<RuntimeOperator> CreateInstance(const std::string type);
     private:
-        uint32_t start_dim_;
-        uint32_t end_dim_;
+    public:
+        int getStartDim() const;
+        void setStartDim(int startDim);
+        int getEndDim() const;
+        void setEndDim(int endDim);
+    private:
+        int start_dim_;
+        int end_dim_;
     };
 }
 #endif //KUIPER_COURSE_FLATTEN_H

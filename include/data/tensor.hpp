@@ -26,6 +26,7 @@ namespace kuiper_infer {
         explicit Tensor() = default;
         explicit Tensor(uint32_t channels, uint32_t rows, uint32_t cols); // 通道、行数、列数
         explicit Tensor(const std::vector<uint32_t> &shape);
+        explicit Tensor(const std::vector<int> &shape);
         static std::shared_ptr<Tensor<float>> create(uint32_t channels, uint32_t rows, uint32_t cols);
         Tensor(const Tensor &tensor);
         Tensor(Tensor &&tensor) noexcept;
@@ -50,6 +51,7 @@ namespace kuiper_infer {
         void padding(const std::vector<uint32_t> &pads, float padding_value);
         void fill(float value);
         void fill(const std::vector<float> &values);
+        void fill(float *value,bool debug);
         void ones();
         void rand();
         void show();
@@ -62,9 +64,9 @@ namespace kuiper_infer {
         static std::shared_ptr<Tensor<float>> elementMultiply(const std::shared_ptr<Tensor<float>> &tensor1,
                                                               const std::shared_ptr<Tensor<float>> &tensor2);
         static std::shared_ptr<Tensor<float>> elementSub(const std::shared_ptr<Tensor<float>> &tensor1,
-                                                              const std::shared_ptr<Tensor<float>> &tensor2);
+                                                         const std::shared_ptr<Tensor<float>> &tensor2);
         static std::shared_ptr<Tensor<float>> elementDiv(const std::shared_ptr<Tensor<float>> &tensor1,
-                                                              const std::shared_ptr<Tensor<float>> &tensor2);
+                                                         const std::shared_ptr<Tensor<float>> &tensor2);
         void transform(const std::function<float(float)> &filter);
         std::shared_ptr<Tensor<float>> clone();
         const float *raw_ptr() const;
@@ -73,6 +75,7 @@ namespace kuiper_infer {
         std::vector<uint32_t> raw_shapes_;
         arma::fcube data_;
     };
+
     using ftensor = Tensor<float>;
     using sftensor = std::shared_ptr<Tensor<float>>;
 }

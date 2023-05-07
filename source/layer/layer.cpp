@@ -12,4 +12,5 @@ namespace kuiper_infer {
                          std::vector<std::shared_ptr<Tensor<float>>> &outputs) {
         LOG(FATAL) << "The layer " << this->layer_name_ << " not implement yet!";
     }
+    void Layer::Forwards() {}
 }

@@ -1,5 +1,6 @@
 find_package(GTest REQUIRED)
 find_package(benchmark REQUIRED)
+find_package(OpenCV REQUIRED)
 aux_source_directory(../benchmark DIR_BENCHMARK)
 set(link_lib glog gtest pthread)
 set(link_math_lib armadillo blas lapack)
@@ -13,4 +14,4 @@ aux_source_directory(../source/parser DIR_PARSER)
 
 add_executable(benchmark_kuiper_course ${DIR_BENCHMARK} ${DIR_DATA} ${DIR_LAYER} ${DIR_FACTORY} ${DIR_OPS} ${DIR_RUNTIME} ${DIR_PARSER})
 link_directories(/usr/local/lib/)
-target_link_libraries(benchmark_kuiper_course ${link_lib} ${link_math_lib} benchmark::benchmark)
+target_link_libraries(benchmark_kuiper_course ${OpenCV_LIBS} ${link_lib} ${link_math_lib} benchmark::benchmark)

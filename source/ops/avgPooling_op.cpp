@@ -4,57 +4,62 @@
 #include "ops/avgPooling_op.h"
 
 namespace kuiper_infer {
-    AvgPoolingOperator::AvgPoolingOperator(uint32_t pooling_h, uint32_t pooling_w, uint32_t stride_h, uint32_t stride_w,
-                                           uint32_t padding_h, uint32_t padding_w) :
-            pooling_h_(pooling_h), pooling_w_(pooling_w), stride_h_(stride_h), stride_w_(stride_w),
-            padding_w_(padding_w), padding_h_(padding_h), Operator(OpType::kOperatorAvgPooling) {
+    AvgPoolingOperator::AvgPoolingOperator() : RuntimeOperator(OpType::kOperatorAvgPooling) {}
+
+    AvgPoolingOperator::AvgPoolingOperator(std::vector<int> &kernel_size, std::vector<int> padding_size, std::vector<int> &stride,
+                                           std::vector<int> &dilation) : RuntimeOperator(OpType::kOperatorAvgPooling), kernel_size_
+            (kernel_size), padding_size_(padding_size), stride_(stride), dilation_(dilation) {
     }
 
-    void AvgPoolingOperator::set_pooling_h(uint32_t pool_h) {
-        pooling_h_ = pool_h;
+    void AvgPoolingOperator::initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) {
+        CHECK(!runtimeParameter.empty()) << "The parameter of " << type << "is empty";
+        this->kernel_size_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("kernel_size"))->value;
+        this->dilation_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("dilation"))->value;
+        this->padding_size_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("padding"))->value;
+        this->stride_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("stride"))->value;
     }
 
-    void AvgPoolingOperator::set_pooling_w(uint32_t pool_w) {
-        pooling_w_ = pool_w;
+    void AvgPoolingOperator::initialAttribute(
+            const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) {}
+
+    std::shared_ptr<RuntimeOperator> AvgPoolingOperator::CreateInstance(const std::string type) {
+        CHECK(PNNX_TO_KUIPER_TABLE[type] == OpType::kOperatorAvgPooling);
+        std::shared_ptr<RuntimeOperator> avgPoolingOperator = std::make_shared<AvgPoolingOperator>();
+        return avgPoolingOperator;
     }
 
-    void AvgPoolingOperator::set_padding_h(uint32_t padding_h) {
-        padding_h_ = padding_h;
+    const std::vector<int> &AvgPoolingOperator::getKernelSize() const {
+        return kernel_size_;
     }
 
-    void AvgPoolingOperator::set_padding_w(uint32_t padding_w) {
-        padding_w_ = padding_w;
+    void AvgPoolingOperator::setKernelSize(const std::vector<int> &kernelSize) {
+        kernel_size_ = kernelSize;
     }
 
-    void AvgPoolingOperator::set_stride_h(uint32_t stride_h) {
-        stride_h_ = stride_h;
+    const std::vector<int> &AvgPoolingOperator::getPaddingSize() const {
+        return padding_size_;
     }
 
-    void AvgPoolingOperator::set_stride_w(uint32_t stride_w) {
-        stride_w_ = stride_w;
+    void AvgPoolingOperator::setPaddingSize(const std::vector<int> &paddingSize) {
+        padding_size_ = paddingSize;
     }
 
-    uint32_t AvgPoolingOperator::get_padding_h() {
-        return padding_h_;
+    const std::vector<int> &AvgPoolingOperator::getStride() const {
+        return stride_;
     }
 
-    uint32_t AvgPoolingOperator::get_padding_w() {
-        return padding_w_;
+    void AvgPoolingOperator::setStride(const std::vector<int> &stride) {
+        stride_ = stride;
     }
 
-    uint32_t AvgPoolingOperator::get_pooling_h() {
-        return pooling_h_;
+    const std::vector<int> &AvgPoolingOperator::getDilation() const {
+        return dilation_;
     }
 
-    uint32_t AvgPoolingOperator::get_pooling_w() {
-        return pooling_w_;
+    void AvgPoolingOperator::setDilation(const std::vector<int> &dilation) {
+        dilation_ = dilation;
     }
 
-    uint32_t AvgPoolingOperator::get_stride_h() {
-        return stride_h_;
-    }
-
-    uint32_t AvgPoolingOperator::get_stride_w() {
-        return stride_w_;
-    }
+    RuntimeOperatorRegistererWrapper kAvgPoolingOperator(OpType::kOperatorAvgPooling,
+                                                         AvgPoolingOperator::CreateInstance);
 }

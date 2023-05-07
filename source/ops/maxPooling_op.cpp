@@ -1,60 +1,69 @@
 //
 // Created by zpx on 2023/02/03.
 //
+#include <utility>
+
 #include "ops/maxPooling_op.h"
 
 namespace kuiper_infer {
-    MaxPoolingOperator::MaxPoolingOperator(uint32_t pooling_h, uint32_t pooling_w, uint32_t stride_h, uint32_t stride_w,
-                                           uint32_t padding_h, uint32_t padding_w) :
-            pooling_h_(pooling_h), pooling_w_(pooling_w), stride_h_(stride_h), stride_w_(stride_w),
-            padding_w_(padding_w), padding_h_(padding_h), Operator(OpType::kOperatorMaxPooling) {
+    MaxPoolingOperator::MaxPoolingOperator() : RuntimeOperator(OpType::kOperatorMaxPooling) {}
+
+    MaxPoolingOperator::MaxPoolingOperator(std::vector<int> &kernel_size, std::vector<int> &padding_size,
+                                           std::vector<int> &stride,  std::vector<int> &dilation) :
+            RuntimeOperator(OpType::kOperatorMaxPooling), kernel_size_(std::move(kernel_size)), padding_size_(padding_size),
+            stride_(std::move(stride)), dilation_(dilation) {
     }
 
-    void MaxPoolingOperator::set_pooling_h(uint32_t pool_h) {
-        pooling_h_ = pool_h;
+    void MaxPoolingOperator::initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) {
+        CHECK(!runtimeParameter.empty()) << "The parameter of " << type << "is empty";
+        this->kernel_size_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("kernel_size"))->value;
+        this->dilation_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("dilation"))->value;
+        this->padding_size_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("padding"))->value;
+        this->stride_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("stride"))->value;
     }
 
-    void MaxPoolingOperator::set_pooling_w(uint32_t pool_w) {
-        pooling_w_ = pool_w;
+    void MaxPoolingOperator::initialAttribute(
+            const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) {
     }
 
-    void MaxPoolingOperator::set_padding_h(uint32_t padding_h) {
-        padding_h_ = padding_h;
+    std::shared_ptr<RuntimeOperator> MaxPoolingOperator::CreateInstance(const std::string type) {
+        CHECK(PNNX_TO_KUIPER_TABLE[type] == OpType::kOperatorMaxPooling);
+        std::shared_ptr<RuntimeOperator> runtimeOperator = std::make_shared<MaxPoolingOperator>();
+        return runtimeOperator;
     }
 
-    void MaxPoolingOperator::set_padding_w(uint32_t padding_w) {
-        padding_w_ = padding_w;
+    const std::vector<int> &MaxPoolingOperator::getKernelSize() const {
+        return kernel_size_;
     }
 
-    void MaxPoolingOperator::set_stride_h(uint32_t stride_h) {
-        stride_h_ = stride_h;
+    void MaxPoolingOperator::setKernelSize(const std::vector<int> &kernelSize) {
+        kernel_size_ = kernelSize;
     }
 
-    void MaxPoolingOperator::set_stride_w(uint32_t stride_w) {
-        stride_w_ = stride_w;
+    const std::vector<int> &MaxPoolingOperator::getPaddingSize() const {
+        return padding_size_;
     }
 
-    uint32_t MaxPoolingOperator::get_padding_h() {
-        return padding_h_;
+    void MaxPoolingOperator::setPaddingSize(const std::vector<int> &paddingSize) {
+        padding_size_ = paddingSize;
     }
 
-    uint32_t MaxPoolingOperator::get_padding_w() {
-        return padding_w_;
+    const std::vector<int> &MaxPoolingOperator::getStride() const {
+        return stride_;
     }
 
-    uint32_t MaxPoolingOperator::get_pooling_h() {
-        return pooling_h_;
+    void MaxPoolingOperator::setStride(const std::vector<int> &stride) {
+        stride_ = stride;
     }
 
-    uint32_t MaxPoolingOperator::get_pooling_w() {
-        return pooling_w_;
+    const std::vector<int> &MaxPoolingOperator::getDilation() const {
+        return dilation_;
     }
 
-    uint32_t MaxPoolingOperator::get_stride_h() {
-        return stride_h_;
+    void MaxPoolingOperator::setDilation(const std::vector<int> &dilation) {
+        dilation_ = dilation;
     }
 
-    uint32_t MaxPoolingOperator::get_stride_w() {
-        return stride_w_;
-    }
+    RuntimeOperatorRegistererWrapper kMaxPoolingOperator(OpType::kOperatorMaxPooling,
+                                                         MaxPoolingOperator::CreateInstance);
 }

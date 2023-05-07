@@ -6,7 +6,7 @@
 #include "factory/layer_factory.hpp"
 
 namespace kuiper_infer {
-    BatchNormLayer::BatchNormLayer(const std::shared_ptr<Operator> &op) : Layer("BatchNorm") {
+    BatchNormLayer::BatchNormLayer(const std::shared_ptr<RuntimeOperator> &op) : Layer("BatchNorm") {
         CHECK(op->op_type_ == OpType::kOperatorBatchNorm) << "Operator was a wrong type: " << int(op->op_type_);
         BatchNormOperator *batchNormOperator = dynamic_cast<BatchNormOperator *>(op.get());
         CHECK(batchNormOperator != nullptr) << "BatchNorm operator is empty";
@@ -25,14 +25,16 @@ namespace kuiper_infer {
         auto &affine_beta = this->op_->getAffineBata();
         CHECK(affine_alpha.size() == affine_beta.size()) << "The size of affine mean and affine var are not correct";
         const uint32_t batch_size = inputs.size();
+        CHECK(inputs.size() == outputs.size()) << "The input size not equal with output size";
+#pragma omp parallel for num_threads(batch_size)
         for (uint32_t i = 0; i < batch_size; ++i) {
-            const auto &input_data = inputs.at(i)->clone();
+            const auto &input_data = inputs.at(i);
             CHECK(input_data != nullptr && !input_data->empty()) << "The input data is null or empty";
             CHECK(input_data->channels() == mean_value->channels())
                             << "The channel of input data and mean value size are not equal";
             CHECK(input_data->channels() == affine_alpha.size())
                             << "The channel of input data and affine value size are not correct";
-            const auto &output_data = outputs.at(i);
+            const auto &output_data = std::make_shared<ftensor>(input_data->shapes());
             CHECK(output_data != nullptr && !output_data->empty()) << "The output data is null or empty";
             CHECK(input_data->size() == output_data->size())
                             << "Input data size and the output data size are not equal";
@@ -45,12 +47,27 @@ namespace kuiper_infer {
                 output_data->at(j) = ((input_data->at(j) - mean_value_) / var_value_ * affine_alpha.at(j) +
                                       affine_beta.at(j));
             }
+            outputs[i] = output_data;
         }
     }
 
-    std::shared_ptr<Layer> BatchNormLayer::CreateInstance(const std::shared_ptr<Operator> &op) {
+    std::shared_ptr<Layer> BatchNormLayer::CreateInstance(const std::shared_ptr<RuntimeOperator> &op) {
         std::shared_ptr<Layer> batch_norm_layer = std::make_unique<BatchNormLayer>(op);
         return batch_norm_layer;
+    }
+
+    void BatchNormLayer::Forwards() {
+        const std::vector<std::shared_ptr<RuntimeOperand>> &input_operand_datas = this->op_->input_operands_seq;
+        std::vector<std::shared_ptr<Tensor<float>>> layer_input_datas;
+        for (const auto &input_operand_data: input_operand_datas) {
+            for (const auto &input_data: input_operand_data->datas) {
+                layer_input_datas.push_back(input_data);
+            }
+        }
+        CHECK(!layer_input_datas.empty()) << this->op_->name << " Layer input data is empty";
+        CHECK(this->op_->output_operands != nullptr && !this->op_->output_operands->datas.empty())
+                        << "Layer output data is empty";
+        Forwards(layer_input_datas, this->op_->output_operands->datas);
     }
 
     LayerRegistererWrapper batchNormLayer(OpType::kOperatorBatchNorm, BatchNormLayer::CreateInstance);

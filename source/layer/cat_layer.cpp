@@ -5,7 +5,7 @@
 #include <glog/logging.h>
 
 namespace kuiper_infer {
-    CatLayer::CatLayer(const std::shared_ptr<Operator> &op) : Layer("Cat") {
+    CatLayer::CatLayer(const std::shared_ptr<RuntimeOperator> &op) : Layer("Cat") {
         CHECK(op != nullptr && op->op_type_ == OpType::kOperatorCat)
                         << "The operator is wrong of " << int(op->op_type_);
         CatOperator *catOperator = dynamic_cast<CatOperator *>(op.get());
@@ -50,10 +50,22 @@ namespace kuiper_infer {
         }
     }
 
-    std::shared_ptr<Layer> CatLayer::CreateInstance(const std::shared_ptr<Operator> &op) {
+    std::shared_ptr<Layer> CatLayer::CreateInstance(const std::shared_ptr<RuntimeOperator> &op) {
         std::shared_ptr<Layer> catLayer = std::make_shared<CatLayer>(op);
         return catLayer;
     }
-
+    void CatLayer::Forwards() {
+        const std::vector<std::shared_ptr<RuntimeOperand>> &input_operand_datas = this->op_->input_operands_seq;
+        std::vector<std::shared_ptr<Tensor<float>>> layer_input_datas;
+        for (const auto &input_operand_data: input_operand_datas) {
+            for (const auto &input_data: input_operand_data->datas) {
+                layer_input_datas.push_back(input_data);
+            }
+        }
+        CHECK(!layer_input_datas.empty()) << this->op_->name << " Layer input data is empty";
+        CHECK(this->op_->output_operands != nullptr && !this->op_->output_operands->datas.empty())
+                        << "Layer output data is empty";
+        Forwards(layer_input_datas, this->op_->output_operands->datas);
+    }
     LayerRegistererWrapper kCatLayer(OpType::kOperatorCat, CatLayer::CreateInstance);
 }

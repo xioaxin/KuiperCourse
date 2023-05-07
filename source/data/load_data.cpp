@@ -1,6 +1,10 @@
 //
 // Created by fss on 22-12-19.
 //
+#include <opencv2/core.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/videoio.hpp>
 #include "data/load_data.hpp"
 #include <glog/logging.h>
 #include <regex>
@@ -16,7 +20,7 @@ namespace kuiper_infer {
         std::stringstream line_stream;
         const auto &[rows, cols] = CSVDataLoader::GetMatrixSize(in, split_char);
         CHECK(rows >= 1);
-        std::shared_ptr<Tensor<float>> input_tensor = std::make_shared<Tensor<float>>(1, rows - 1, cols);
+        std::shared_ptr<Tensor<float>> input_tensor = std::make_shared<Tensor<float >>(1, rows - 1, cols);
         arma::fmat &data = input_tensor->at(0);
         size_t row = 0;
         while (in.good()) {
@@ -31,9 +35,6 @@ namespace kuiper_infer {
             while (line_stream.good()) {
                 std::getline(line_stream, token, split_char);
                 try {
-                    //todo 补充
-                    // 能够读取到第一行的csv列名，并存放在headers中
-                    // 能够读取到第二行之后的csv数据，并相应放置在data变量的row，col位置中
                     if (row == 0) {
                         if (token.substr(token.size() - 1, 2) == "\r")
                             headers.push_back(token.substr(0, token.size() - 1));
@@ -60,7 +61,7 @@ namespace kuiper_infer {
         std::string line_str;
         std::stringstream line_stream;
         const auto &[rows, cols] = CSVDataLoader::GetMatrixSize(in, split_char);
-        std::shared_ptr<Tensor<float>> input_tensor = std::make_shared<Tensor<float>>(1, rows, cols);
+        std::shared_ptr<Tensor<float>> input_tensor = std::make_shared<Tensor<float >>(1, rows, cols);
         arma::fmat &data = input_tensor->at(0);
         size_t row = 0;
         while (in.good()) {
@@ -122,20 +123,23 @@ namespace kuiper_infer {
         return {fn_rows, fn_cols};
     }
 
-//    std::shared_ptr<Tensor<float>> ImageDataLoader::LoadData(const std::string &file_path) {
-//        CHECK(!file_path.empty()) << "The imag path is empty";
-//        struct stat buffer;
-//        CHECK((stat(file_path.c_str(), &buffer) == 0)) << "The path of image is illegal";
-//        cv::Mat image = cv::imread(file_path);
-//        std::shared_ptr<Tensor<float>> input_tensor = std::make_shared<Tensor<float>>(image.channels(), image.rows,
-//                                                                                      image.cols);
-//        for (int i = 0; i < image.rows; i++) {
-//            for (int j = 0; j < image.cols; j++) {
-//                for (int k = 0; k < image.channels(); k++) {
-//                    input_tensor->at(k, i, j) = image.at<cv::Vec3b>(i, j)[k];
-//                }
-//            }
-//        }
-//        return input_tensor;
-//    }
+    std::shared_ptr<Tensor<float>> ImageDataLoader::LoadData(const std::string &file_path) {
+        CHECK(!file_path.empty()) << "The imag path is empty";
+        struct stat buffer;
+        CHECK((stat(file_path.c_str(), &buffer) == 0)) << "The path of image is illegal";
+        cv::Mat image = cv::imread(file_path,cv::IMREAD_COLOR);
+        cv::cvtColor(image, image, cv::COLOR_BGR2RGB);
+        image.convertTo(image, CV_32FC3);
+        std::vector<cv::Mat> channels;
+        cv::split(image, channels);
+        std::shared_ptr<Tensor<float>> input_tensor = std::make_shared<Tensor<float >>(image.channels(), image.rows, image.cols);
+        uint8_t index = 0;
+        uint32_t total_size_per_slice = image.rows * image.cols;
+        for (const auto &item: channels) {
+            const cv::Mat &split_image_t = item.t();
+            memcpy(input_tensor->at(index).memptr(), split_image_t.data, sizeof(float) * total_size_per_slice);
+            ++index;
+        }
+        return input_tensor;
+    }
 }

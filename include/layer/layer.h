@@ -8,6 +8,7 @@
 #include "data/tensor.hpp"
 #include <string>
 #include <omp.h>
+
 #define MAX_TEST_ITERATION 4
 namespace kuiper_infer {
     class Layer {
@@ -15,6 +16,7 @@ namespace kuiper_infer {
         explicit Layer(const std::string &layer_name);
         virtual void Forwards(const std::vector<std::shared_ptr<Tensor<float>>> &inputs,
                               std::vector<std::shared_ptr<Tensor<float>>> &outputs);
+        virtual void Forwards();
         virtual ~Layer() = default;
     private:
         std::string layer_name_;

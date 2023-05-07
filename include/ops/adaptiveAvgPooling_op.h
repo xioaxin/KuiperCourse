@@ -6,22 +6,23 @@
 #define KUIPER_COURSE_ADAPTIVEAVGPOOLING_H
 
 #include "layer/layer.h"
-#include "ops.h"
 #include <cstdint>
-#include "ops/ops.h"
+#include "factory/operator_factory.h"
 
 namespace kuiper_infer {
-    class AdaptiveAvgPoolingOperator : public Operator {
+    class AdaptiveAvgPoolingOperator : public RuntimeOperator {
     public:
-        ~AdaptiveAvgPoolingOperator() override = default;
-        explicit AdaptiveAvgPoolingOperator(uint32_t output_h, uint32_t output_w);
-        void set_output_h(uint32_t output_h);
-        void set_output_w(uint32_t output_w);
-        uint32_t get_output_h();
-        uint32_t get_output_w();
+        AdaptiveAvgPoolingOperator();
+
+        ~AdaptiveAvgPoolingOperator() {};
+        explicit AdaptiveAvgPoolingOperator(std::vector<int> output_size);
+        const std::vector<int> &getOutputSize() const;
+        void setOutputSize(const std::vector<int> &outputSize);
+        void initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) override;
+        void initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) override;
+        static std::shared_ptr<RuntimeOperator> CreateInstance(std::string type);
     private:
-        uint32_t output_h_;
-        uint32_t output_w_;
+        std::vector<int> output_size_;
     };
 }
 #endif //KUIPER_COURSE_ADAPTIVEAVGPOOLING_H

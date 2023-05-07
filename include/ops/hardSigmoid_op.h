@@ -5,14 +5,19 @@
 #ifndef KUIPER_COURSE_HARDSIGMOID_OP_H
 #define KUIPER_COURSE_HARDSIGMOID_OP_H
 
-#include "ops.h"
 #include <cstdint>
+#include <map>
+#include "factory/operator_factory.h"
 
 namespace kuiper_infer {
-    class HardSigmoidOperator : public Operator {
+    class HardSigmoidOperator : public RuntimeOperator {
     public:
-        explicit HardSigmoidOperator();
-        ~HardSigmoidOperator() override = default;
+        HardSigmoidOperator();
+
+        ~HardSigmoidOperator() {};
+        void initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) override;
+        void initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) override;
+        static std::shared_ptr<RuntimeOperator> CreateInstance(const std::string type);
     };
 }
 #endif //KUIPER_COURSE_HARDSIGMOID_OP_H

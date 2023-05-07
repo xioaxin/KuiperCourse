@@ -6,15 +6,18 @@
 #include "ops/convolution_op.h"
 #include "layer/layer.h"
 #include "layer/convolution_layer.h"
+#include "factory/layer_factory.hpp"
 
 namespace kuiper_infer {
-    ConvolutionLayer::ConvolutionLayer(const std::shared_ptr<Operator> &op) : Layer("Convolution") {
+    ConvolutionLayer::ConvolutionLayer(const std::shared_ptr<RuntimeOperator> &op) : Layer("Convolution") {
         CHECK(op->op_type_ == OpType::kOperatorConvolution) << "Operator was a wrong type: " << int(op->op_type_);
         ConvolutionOperator *convolutionOperator = dynamic_cast<ConvolutionOperator *>(op.get());
         CHECK(convolutionOperator != nullptr) << "Convolution operator is empty";
         this->op_ = std::make_unique<ConvolutionOperator>(*convolutionOperator);
     }
-
+/*
+ * TODO: 重构卷积操作
+ */
     void ConvolutionLayer::Forwards(const std::vector<std::shared_ptr<Tensor<float>>> &inputs,
                                     std::vector<std::shared_ptr<Tensor<float>>> &outputs) {
         CHECK(this->op_ != nullptr && this->op_->op_type_ == OpType::kOperatorConvolution);
@@ -28,20 +31,22 @@ namespace kuiper_infer {
             CHECK(!bias.empty());
             bias_ = bias;
         }
-        const uint32_t stride_h = this->op_->getStride_H();
-        const uint32_t stride_w = this->op_->getStride_W();
+        const uint32_t stride_h = this->op_->getStride()[0];
+        const uint32_t stride_w = this->op_->getStride()[1];
         CHECK(stride_h > 0 && stride_w > 0);
-        const uint32_t padding_h = this->op_->getPadding_H();
-        const uint32_t padding_w = this->op_->getPadding_W();
+        const uint32_t padding_h = this->op_->getPadding()[0];
+        const uint32_t padding_w = this->op_->getPadding()[1];
         const uint32_t groups = this->op_->getGroups();
         const uint32_t batch = inputs.size();
         CHECK(batch > 0);
+        CHECK(inputs.size() == outputs.size()) << "The input size not equal with output size";
+//#pragma omp parallel for num_threads(batch)
         for (uint32_t i = 0; i < batch; i++) {
             const std::shared_ptr<ftensor> &input = inputs.at(i)->clone();
             CHECK(input != nullptr && !input->empty()) << "The input feature map of convolution layer is empty";
             std::shared_ptr<ftensor> input_;
             if (padding_h > 0 || padding_w > 0) {
-                input_ = input->clone();
+                input_ = input;
                 input_->padding({padding_h, padding_h, padding_w, padding_w}, 0);           // 四周填充全零
             } else {
                 input_ = input;
@@ -80,9 +85,9 @@ namespace kuiper_infer {
                         memcpy(kernel_matrix_c.memptr() + row_len * ic,
                                kernel->at(ic).memptr(), row_len * sizeof(float));
                     }
-#ifdef DEBUG
-                    LOG(INFO) << "kernel展开后: " << "\n" << kernel_matrix_c;
-#endif
+//#ifdef DEBUG
+//                    LOG(INFO) << "kernel展开后: " << "\n" << kernel_matrix_c;
+//#endif
                     kernel_matrix_arr.at(k) = kernel_matrix_c;
                 }
                 arma::fmat input_matrix(input_c_group * row_len, col_len);
@@ -101,9 +106,9 @@ namespace kuiper_infer {
                         }
                     }
                 }
-#ifdef DEBUG
-                LOG(INFO) << "input展开后: " << "\n" << input_matrix;
-#endif
+//#ifdef DEBUG
+//                LOG(INFO) << "input展开后: " << "\n" << input_matrix;
+//#endif
                 std::shared_ptr<ftensor> output_tensor = outputs.at(i);
                 if (output_tensor == nullptr || outputs.empty()) {
                     output_tensor = std::make_shared<ftensor>(kernel_count, output_h, output_w);
@@ -132,4 +137,25 @@ namespace kuiper_infer {
             }
         }
     }
+
+    std::shared_ptr<Layer> ConvolutionLayer::CreateInstance(const std::shared_ptr<RuntimeOperator> &op) {
+        std::shared_ptr<Layer> convolutionLayer = std::make_shared<ConvolutionLayer>(op);
+        return convolutionLayer;
+    }
+
+    void ConvolutionLayer::Forwards() {
+        const std::vector<std::shared_ptr<RuntimeOperand>> &input_operand_datas = this->op_->input_operands_seq;
+        std::vector<std::shared_ptr<Tensor<float>>> layer_input_datas;
+        for (const auto &input_operand_data: input_operand_datas) {
+            for (const auto &input_data: input_operand_data->datas) {
+                layer_input_datas.push_back(input_data);
+            }
+        }
+        CHECK(!layer_input_datas.empty()) << this->op_->name << " Layer input data is empty";
+        CHECK(this->op_->output_operands != nullptr && !this->op_->output_operands->datas.empty())
+                        << "Layer output data is empty";
+        Forwards(layer_input_datas, this->op_->output_operands->datas);
+    }
+
+    LayerRegistererWrapper convolutionRegisterWrapper(OpType::kOperatorConvolution, ConvolutionLayer::CreateInstance);
 }

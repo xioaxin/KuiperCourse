@@ -6,14 +6,15 @@
 
 #ifndef KUIPER_COURSE_INCLUDE_DATA_LOAD_DATA_HPP_
 #define KUIPER_COURSE_INCLUDE_DATA_LOAD_DATA_HPP_
-
+#include <opencv2/core.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/videoio.hpp>
+#include <cstring>
+#include <string>
 #include <armadillo>
 #include "tensor.hpp"
 #include <sys/stat.h>
-//#include <opencv2/opencv.hpp>
-//#include <opencv2/imgcodecs.hpp>
-//#include <opencv2/highgui.hpp>
-//#include <opencv2/core.hpp>
 
 namespace kuiper_infer {
     class CSVDataLoader {
@@ -28,11 +29,10 @@ namespace kuiper_infer {
         static std::pair<size_t, size_t> GetMatrixSize(std::ifstream &file, char split_char);
     };
 
-//    class ImageDataLoader { // 读取图像数据
-//    public:
-//        static std::shared_ptr<Tensor<float >> LoadData(const std::string &file_path);
-//
-//        ~ImageDataLoader() {};
-//    };
+    class ImageDataLoader { // 读取图像数据
+    public:
+        static std::shared_ptr<Tensor<float >> LoadData(const std::string &file_path);
+        ~ImageDataLoader() {};
+    };
 }
 #endif //KUIPER_COURSE_INCLUDE_DATA_LOAD_DATA_HPP_

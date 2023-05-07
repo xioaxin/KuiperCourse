@@ -8,14 +8,21 @@
 #include <vector>
 #include <string>
 #include <memory>
-#include "ops.h"
+#include <map>
 #include "parser/parse_expression.h"
+#include "factory/operator_factory.h"
 
 namespace kuiper_infer {
-    class ExpressionOperator : public Operator {
+    class ExpressionOperator : public RuntimeOperator {
     public:
+        ExpressionOperator();
         explicit ExpressionOperator(const std::string &expr);
+
+        ~ExpressionOperator() {};
         std::vector<std::shared_ptr<TokenNode>> generate();
+        void initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) override;
+        void initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) override;
+        static std::shared_ptr<RuntimeOperator> CreateInstance(const std::string type);
     private:
         std::shared_ptr<ExpressionParser> parser_;
         std::vector<std::shared_ptr<TokenNode>> nodes_;

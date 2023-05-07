@@ -5,7 +5,7 @@
 #include <glog/logging.h>
 
 namespace kuiper_infer {
-    UpSampleLayer::UpSampleLayer(const std::shared_ptr<Operator> &op) : Layer("UpSample") {
+    UpSampleLayer::UpSampleLayer(const std::shared_ptr<RuntimeOperator> &op) : Layer("UpSample") {
         CHECK(op != nullptr && op->op_type_ == OpType::kOperatorUpSample)
                         << "The operator of upSample is illegal: " << int(op->op_type_);
         UpSampleOperator *upSampleOperator = dynamic_cast<UpSampleOperator *>(op.get());
@@ -24,10 +24,11 @@ namespace kuiper_infer {
         const uint32_t output_h = std::ceil(inputs[0]->rows() * scale_h);
         const uint32_t output_w = std::ceil(inputs[0]->cols() * scale_w);
         const UpSampleMode upSampleMode = this->op_->getUpSampleModel();
-        outputs.clear();
+        CHECK(inputs.size() == outputs.size()) << "The input size not equal with output size";
+#pragma omp parallel for num_threads(batch_size)
         for (uint32_t i = 0; i < batch_size; ++i) {
             auto input_data = inputs[i]->clone();
-            std::shared_ptr<ftensor> output_data = std::make_shared<ftensor>(input_data->channels(), output_h, output_w);
+            std::shared_ptr<ftensor> output_data = std::make_shared<ftensor>(input_data->channels(), output_h,output_w);
             for (uint32_t j = 0; j < input_data->channels(); j++) {
                 arma::mat input_data_ = arma::conv_to<arma::mat>::from(input_data->at(j));
                 arma::vec W = arma::linspace(0, input_data_.n_cols, input_data_.n_cols);
@@ -45,13 +46,27 @@ namespace kuiper_infer {
                 }
                 output_data->at(j) = arma::conv_to<arma::fmat>::from(output_data_);
             }
-            outputs.push_back(output_data);
+            outputs[i] = output_data;
         }
     }
 
-    std::shared_ptr<Layer> UpSampleLayer::CreateInstance(const std::shared_ptr<Operator> &op) {
+    std::shared_ptr<Layer> UpSampleLayer::CreateInstance(const std::shared_ptr<RuntimeOperator> &op) {
         std::shared_ptr<Layer> upSampleLayer = std::make_shared<UpSampleLayer>(op);
         return upSampleLayer;
+    }
+
+    void UpSampleLayer::Forwards() {
+        const std::vector<std::shared_ptr<RuntimeOperand>> &input_operand_datas = this->op_->input_operands_seq;
+        std::vector<std::shared_ptr<Tensor<float>>> layer_input_datas;
+        for (const auto &input_operand_data: input_operand_datas) {
+            for (const auto &input_data: input_operand_data->datas) {
+                layer_input_datas.push_back(input_data);
+            }
+        }
+        CHECK(!layer_input_datas.empty()) << this->op_->name << " Layer input data is empty";
+        CHECK(this->op_->output_operands != nullptr && !this->op_->output_operands->datas.empty())
+                        << "Layer output data is empty";
+        Forwards(layer_input_datas, this->op_->output_operands->datas);
     }
 
     LayerRegistererWrapper upSampleLayerRegistererWrapper(OpType::kOperatorUpSample, UpSampleLayer::CreateInstance);

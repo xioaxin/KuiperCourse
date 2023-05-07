@@ -14,7 +14,7 @@
 #include "ir.h"
 #include "factory/layer_factory.hpp"
 #include "runtime/runtime_operand.h"
-#include "runtime_op.h"
+#include "ops/runtime_op.h"
 
 namespace kuiper_infer {
     class RuntimeGraphShape {

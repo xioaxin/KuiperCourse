@@ -10,10 +10,11 @@
 namespace kuiper_infer {
     class AvgPoolingLayer : public Layer {
     public:
-        explicit AvgPoolingLayer(const std::shared_ptr<Operator> &op);
+        explicit AvgPoolingLayer(const std::shared_ptr<RuntimeOperator> &op);
         void Forwards(const std::vector<std::shared_ptr<Tensor<float>>> &inputs,
                       std::vector<std::shared_ptr<Tensor<float>>> &outputs) override;
-        static std::shared_ptr<Layer> CreateInstance(const std::shared_ptr<Operator> &op);
+        void Forwards() override;
+        static std::shared_ptr<Layer> CreateInstance(const std::shared_ptr<RuntimeOperator> &op);
     private:
         std::unique_ptr<AvgPoolingOperator> op_;
     };

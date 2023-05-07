@@ -5,17 +5,21 @@
 #ifndef KUIPER_COURSE_LINEAR_OP_H
 #define KUIPER_COURSE_LINEAR_OP_H
 
-#include "ops.h"
 #include <vector>
 #include "data/tensor.hpp"
 #include <stdint.h>
 #include <memory>
+#include "factory/operator_factory.h"
 
 namespace kuiper_infer {
-    class LinearOperator : public Operator {
+    class LinearOperator : public RuntimeOperator {
     public:
+        LinearOperator();
         explicit LinearOperator(const uint32_t input_feature, uint32_t output_feature);
-        ~LinearOperator() override = default;
+
+        virtual ~LinearOperator() {
+
+        };
         void setInputFeature(const uint32_t input_feature);
         const uint32_t getInputFeature() const;
         void setOutputFeature(const uint32_t output_feature);
@@ -23,13 +27,17 @@ namespace kuiper_infer {
         const bool isUseBias() const;
         void setUseBias(const bool use_bias);
         const bool getUseBias() const;
-        void setWeights(const std::shared_ptr<ftensor> &weight);
-        const std::shared_ptr<ftensor> getWeights() const;
-        void setBias(const std::shared_ptr<ftensor> &bias);
-        const std::shared_ptr<ftensor> getBias() const;
+        const std::vector<sftensor> &getWeight() const;
+        void setWeight(const std::vector<sftensor> &weight);
+        const std::vector<sftensor> &getBias() const;
+        void setBias(const std::vector<sftensor> &bias);
+        void initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) override;
+        void
+        initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) override;
+        static std::shared_ptr<RuntimeOperator> CreateInstance(const std::string type);
     private:
-        std::shared_ptr<ftensor> weight_;
-        std::shared_ptr<ftensor> bias_;
+        std::vector<sftensor> weight_;
+        std::vector<sftensor> bias_;
         bool use_bias_ = false;
         uint32_t input_feature_;
         uint32_t output_feature_;

@@ -6,16 +6,16 @@
 #define KUIPER_COURSE_UPSAMPLE_LAYER_H
 
 #include "layer.h"
-#include "factory/layer_factory.hpp"
 #include "ops/upSample_op.h"
 
 namespace kuiper_infer {
     class UpSampleLayer : public Layer {
     public:
-        explicit UpSampleLayer(const std::shared_ptr<Operator> &op);
+        explicit UpSampleLayer(const std::shared_ptr<RuntimeOperator> &op);
         void Forwards(const std::vector<std::shared_ptr<Tensor<float>>> &inputs,
-                      std::vector<std::shared_ptr<Tensor<float>>> &outputs);
-        static std::shared_ptr<Layer> CreateInstance(const std::shared_ptr<Operator> &op);
+                      std::vector<std::shared_ptr<Tensor<float>>> &outputs) override;
+        void Forwards() override;
+        static std::shared_ptr<Layer> CreateInstance(const std::shared_ptr<RuntimeOperator> &op);
     private:
         std::unique_ptr<UpSampleOperator> op_;
     };

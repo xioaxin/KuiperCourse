@@ -21,6 +21,21 @@ namespace kuiper_infer {
         return std::make_shared<Tensor<float>>(channels, rows, cols);
     }
 
+    Tensor<float>::Tensor(const std::vector<int> &shape) {
+        CHECK(shape.size() == 3);
+        uint32_t channels = shape.at(0);
+        uint32_t rows = shape.at(1);
+        uint32_t cols = shape.at(2);
+        data_ = arma::fcube(rows, cols, channels);
+        if (channels == 1 && rows == 1) {
+            this->raw_shapes_ = std::vector<uint32_t>{cols};
+        } else if (channels == 1) {
+            this->raw_shapes_ = std::vector<uint32_t>{rows, cols};
+        } else {
+            this->raw_shapes_ = std::vector<uint32_t>{channels, rows, cols};
+        }
+    }
+
     Tensor<float>::Tensor(const std::vector<uint32_t> &shape) {
         CHECK(shape.size() == 3);
         uint32_t channels = shape.at(0);
@@ -174,13 +189,23 @@ namespace kuiper_infer {
         const uint32_t cols = this->cols();
         const uint32_t planes = rows * cols;
         const uint32_t channels = this->data_.n_slices;
-        // value0 value1 value 2 value3
-        // value4 value5 value6 value7
-        // value8 value9 value10 value1
-        //todo 请把代码补充在这里2
         for (uint32_t i = 0; i < channels; ++i) {
             auto &channel_data = this->data_.slice(i);
             const arma::fmat &channel_data_t = arma::fmat(values.data() + i * planes, this->cols(), this->rows());
+            channel_data = channel_data_t.t();
+        }
+    }
+
+    void Tensor<float>::fill(float *values, bool debug) {
+        CHECK(!this->data_.empty());
+        const uint32_t total_elems = this->data_.size();
+        const uint32_t rows = this->rows();
+        const uint32_t cols = this->cols();
+        const uint32_t planes = rows * cols;
+        const uint32_t channels = this->data_.n_slices;
+        for (uint32_t i = 0; i < channels; ++i) {
+            auto &channel_data = this->data_.slice(i);
+            const arma::fmat &channel_data_t = arma::fmat(values + i * planes, this->cols(), this->rows());
             channel_data = channel_data_t.t();
         }
     }

@@ -1,19 +1,18 @@
 //
 // Created by zpx on 2022/12/27.
 //
-#include <glog/logging.h>
 #include <gtest/gtest.h>
 #include "ops/softMax_op.h"
 #include "layer/softMax_layer.h"
 
 TEST(test_layer, forward_softMax1) {
     using namespace kuiper_infer;
-    std::shared_ptr<Operator> softMax_op = std::make_shared<SoftMaxOperator>();
+    std::shared_ptr<RuntimeOperator> softMax_op = std::make_shared<SoftMaxOperator>();
     arma::fmat input_data1 = "1,2,3,4;"
                              "5,6,7,8;"
                              "1,2,3,4;"
                              "5,6,7,8";
-    arma::fmat input_data2 = "1,2,3,4;"
+    arma::fmat input_data2 = "1,5,3,4;"
                              "7,2,3,4;"
                              "9,8,7,6;"
                              "5,4,3,2";
@@ -21,11 +20,11 @@ TEST(test_layer, forward_softMax1) {
     input->at(0) = input_data1;
     input->at(1) = input_data2;
     std::shared_ptr<ftensor> output = std::make_shared<ftensor>(2, 4, 4);
-    std::vector<sftensor> outputs;
-    std::vector<std::shared_ptr<Tensor<float>>> inputs; //作为一个批次去处理
+    std::vector<sftensor> outputs(MAX_TEST_ITERATION);
+    std::vector<sftensor> inputs(MAX_TEST_ITERATION); //作为一个批次去处理
+    inputs[0] = input;
     for (int i = 0; i < MAX_TEST_ITERATION; i++) {
-        inputs.push_back(input);
-        outputs.push_back(output);
+        inputs[i] = input;
     }
     SoftMaxLayer layer(softMax_op);
     layer.Forwards(inputs, outputs);
