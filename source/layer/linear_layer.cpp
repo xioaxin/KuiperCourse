@@ -27,7 +27,7 @@ namespace kuiper_infer {
         CHECK(!weight.empty()) << "The weight of linear layer is empty";
         CHECK(inputs.size() == outputs.size()) << "The input size not equal with output size";
         if (inputs[0]->cols() == 1) {
-#pragma omp parallel num_threads(batch_size)
+//#pragma omp parallel num_threads(batch_size)
             for (uint32_t i = 0; i < batch_size; i++) {
                 auto &input_data = inputs.at(i);
                 CHECK(input_data->channels() == 1) << "The channel of input data must equal to 1";
@@ -48,7 +48,7 @@ namespace kuiper_infer {
                 outputs[i] = output_data;
             }
         } else {
-#pragma omp parallel num_threads(batch_size)
+//#pragma omp parallel num_threads(batch_size)
             for (uint32_t i = 0; i < batch_size; i++) {
                 auto &input_data = inputs.at(i);
                 CHECK(input_data->channels() == 1) << "The channel of input data must equal to 1";

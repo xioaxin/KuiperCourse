@@ -9,10 +9,10 @@ namespace kuiper_infer {
     FlattenOperator::FlattenOperator(int start_dim, int end_dim) :
             RuntimeOperator(OpType::kOperatorFlatten), start_dim_(start_dim), end_dim_(end_dim) {}
 
-    void FlattenOperator::initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) {
+    void FlattenOperator::initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) {
         CHECK(!runtimeParameter.empty()) << "The parameter of " << type << "is empty";
-        this->start_dim_ = dynamic_cast<RuntimeParameterInt *>(runtimeParameter.at("start_dim"))->value;
-        this->end_dim_ = dynamic_cast<RuntimeParameterInt *>(runtimeParameter.at("end_dim"))->value;
+        this->start_dim_ = dynamic_cast<RuntimeParameterInt *>(runtimeParameter.at("start_dim").get())->value;
+        this->end_dim_ = dynamic_cast<RuntimeParameterInt *>(runtimeParameter.at("end_dim").get())->value;
     }
 
     void FlattenOperator::initialAttribute(

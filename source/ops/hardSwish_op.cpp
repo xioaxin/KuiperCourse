@@ -6,7 +6,7 @@
 namespace kuiper_infer {
     HardSwishOperator::HardSwishOperator() : RuntimeOperator(OpType::kOperatorHardSwish) {}
 
-    void HardSwishOperator::initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) {
+    void HardSwishOperator::initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) {
     }
 
     void HardSwishOperator::initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) {

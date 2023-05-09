@@ -2,7 +2,6 @@
 // Created by zpx on 2023/02/21.
 //
 #include <utility>
-
 #include "ops/adaptiveMaxPooling_op.h"
 
 namespace kuiper_infer {
@@ -12,9 +11,9 @@ namespace kuiper_infer {
             OpType::kOperatorAdaptiveMaxPooling), output_size_(std::move(output_size)) {}
 
     void
-    AdaptiveMaxPoolingOperator::initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) {
+    AdaptiveMaxPoolingOperator::initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) {
         CHECK(!runtimeParameter.empty()) << "The parameter of " << type << "is empty";
-        this->output_size_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("output_size"))->value;
+        this->output_size_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("output_size").get())->value;
     }
 
     void AdaptiveMaxPoolingOperator::initialAttribute(

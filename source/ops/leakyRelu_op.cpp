@@ -13,7 +13,7 @@ namespace kuiper_infer {
 
     float LeakyReluOperator::get_thresh() const { return thresh_; }
 
-    void LeakyReluOperator::initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) {
+    void LeakyReluOperator::initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) {
     }
 
     void LeakyReluOperator::initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) {

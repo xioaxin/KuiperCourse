@@ -2,7 +2,6 @@
 // Created by zpx on 2023/02/21.
 //
 #include <utility>
-
 #include "ops/adaptiveAvgPooling_op.h"
 
 namespace kuiper_infer {
@@ -11,9 +10,9 @@ namespace kuiper_infer {
     AdaptiveAvgPoolingOperator::AdaptiveAvgPoolingOperator(std::vector<int> output_size) : RuntimeOperator(
             OpType::kOperatorAdaptiveAvgPooling), output_size_(std::move(output_size)) {}
 
-    void AdaptiveAvgPoolingOperator::initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) {
+    void AdaptiveAvgPoolingOperator::initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter >> &runtimeParameter) {
         CHECK(!runtimeParameter.empty()) << "The parameter of " << type << "is empty";
-        this->output_size_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("output_size"))->value;
+        this->output_size_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("output_size").get())->value;
     }
 
     void AdaptiveAvgPoolingOperator::initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) {
@@ -33,5 +32,6 @@ namespace kuiper_infer {
         output_size_ = outputSize;
     }
 
-    RuntimeOperatorRegistererWrapper kAdaptiveAvgPoolingOperator(OpType::kOperatorAdaptiveAvgPooling, AdaptiveAvgPoolingOperator::CreateInstance);
+    RuntimeOperatorRegistererWrapper kAdaptiveAvgPoolingOperator(OpType::kOperatorAdaptiveAvgPooling,
+                                                                 AdaptiveAvgPoolingOperator::CreateInstance);
 }

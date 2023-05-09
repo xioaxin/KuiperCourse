@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
+#set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 project(kuiper_course)
 set(CMAKE_CXX_STANDARD 17)
+# 内存分析工具
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address ")
 
 # DEBUG
 option(DEBUG "Debug the project" OFF)
@@ -25,7 +28,6 @@ add_executable(kuiper_course main.cpp)
 target_include_directories(kuiper_course PUBLIC /usr/include/armadillo_bits)
 target_include_directories(kuiper_course PUBLIC ${GTEST_INCLUDE_DIRS})
 target_link_libraries(kuiper_course ${link_lib} ${link_math_lib} ${OpenCV_LIBS} benchmark::benchmark OpenMP::OpenMP_CXX magic_enum::magic_enum)
-
 enable_testing()
 add_subdirectory(test)
 add_subdirectory(benchmark)

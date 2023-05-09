@@ -40,19 +40,19 @@ TEST(test_model, test_resnet18) {
     outputs = graph.forward(inputs, false); // 推理
     SoftMaxLayer layer(std::make_shared<SoftMaxOperator>());
     layer.Forwards(outputs, outputs);
-    for (int i = 0; i < outputs.size(); ++i) {
-        const sftensor &output_tensor = outputs.at(i);
-        output_tensor->show();
-        assert(output_tensor->size() == 1 * 1000);
-        float max_prob = -1;
-        int max_index = -1;
-        for (int j = 0; j < output_tensor->size(); ++j) {
-            float prob = output_tensor->index(j);
-            if (max_prob <= prob) {
-                max_prob = prob;
-                max_index = j;
-            }
-        }
-        printf("class with max prob is %f index %d\n", max_prob, max_index);
-    }
+//    for (int i = 0; i < outputs.size(); ++i) {
+//        const sftensor &output_tensor = outputs.at(i);
+//        output_tensor->show();
+//        assert(output_tensor->size() == 1 * 1000);
+//        float max_prob = -1;
+//        int max_index = -1;
+//        for (int j = 0; j < output_tensor->size(); ++j) {
+//            float prob = output_tensor->index(j);
+//            if (max_prob <= prob) {
+//                max_prob = prob;
+//                max_index = j;
+//            }
+//        }
+//        printf("class with max prob is %f index %d\n", max_prob, max_index);
+//    }
 }

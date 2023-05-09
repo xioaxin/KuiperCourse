@@ -14,7 +14,7 @@ namespace kuiper_infer {
 
     float ReluOperator::get_thresh() const { return thresh_; }
 
-    void ReluOperator::initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) {
+    void ReluOperator::initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) {
 
     }
 

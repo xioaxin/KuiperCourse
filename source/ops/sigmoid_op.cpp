@@ -6,10 +6,10 @@
 namespace kuiper_infer {
     SigmoidOperator::SigmoidOperator() : RuntimeOperator(OpType::kOperatorSigmoid) {}
 
-    void SigmoidOperator::initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) {
+    void SigmoidOperator::initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) {
     }
 
-    void SigmoidOperator::initialAttribute(const std::map<std::string,std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) {
+    void SigmoidOperator::initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) {
     }
 
     std::shared_ptr<RuntimeOperator> SigmoidOperator::CreateInstance(const std::string type) {

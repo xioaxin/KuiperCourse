@@ -149,6 +149,9 @@ namespace kuiper_infer {
             } else if (kOperator->type == "pnnx.Output") {
                 this->output_operators_maps_.insert({kOperator->name, kOperator});
             } else {
+                if (kOperator->type == "Tensor.view") {
+                    std::cout << std::endl;
+                }
                 kOperator->initialParameter(kOperator->params);
                 kOperator->initialAttribute(kOperator->attribute);
                 kOperator->layer = LayerRegisterer::CreateLayer(kOperator);
@@ -303,48 +306,48 @@ namespace kuiper_infer {
             const int type = parameter.type;
             switch (type) {
                 case int(RuntimeParameterType::kParameterUnknown): {
-                    RuntimeParameter *runtime_parameter = new RuntimeParameter();
+                    std::shared_ptr<RuntimeParameter> runtime_parameter = std::make_shared<RuntimeParameter>();
                     runtime_operator->params.insert({name, runtime_parameter});
                 }
                     break;
                 case int(RuntimeParameterType::kParameterBool): {
-                    RuntimeParameterBool *runtimeParameterBool = new RuntimeParameterBool();
+                    std::shared_ptr<RuntimeParameterBool> runtimeParameterBool = std::make_shared<RuntimeParameterBool>();
                     runtimeParameterBool->value = parameter.b;
                     runtime_operator->params.insert({name, runtimeParameterBool});
                 }
                     break;
                 case int(RuntimeParameterType::kParameterInt): {
-                    RuntimeParameterInt *runtimeParameterInt = new RuntimeParameterInt();
+                    std::shared_ptr<RuntimeParameterInt> runtimeParameterInt = std::make_shared<RuntimeParameterInt>();
                     runtimeParameterInt->value = parameter.i;
                     runtime_operator->params.insert({name, runtimeParameterInt});
                 }
                     break;
                 case int(RuntimeParameterType::kParameterFloat): {
-                    RuntimeParameterFloat *runtimeParameterFloat = new RuntimeParameterFloat();
+                    std::shared_ptr<RuntimeParameterFloat> runtimeParameterFloat = std::make_shared<RuntimeParameterFloat>();
                     runtimeParameterFloat->value = parameter.f;
                     runtime_operator->params.insert({name, runtimeParameterFloat});
                 }
                     break;
                 case int(RuntimeParameterType::kParameterString): {
-                    RuntimeParameterString *runtimeParameterString = new RuntimeParameterString();
+                    std::shared_ptr<RuntimeParameterString> runtimeParameterString = std::make_shared<RuntimeParameterString>();
                     runtimeParameterString->value = parameter.s;
                     runtime_operator->params.insert({name, runtimeParameterString});
                 }
                     break;
                 case int(RuntimeParameterType::kParameterIntArray): {
-                    RuntimeParameterIntArray *runtimeParameterIntArray = new RuntimeParameterIntArray();
+                    std::shared_ptr<RuntimeParameterIntArray> runtimeParameterIntArray = std::make_shared<RuntimeParameterIntArray>();
                     runtimeParameterIntArray->value = parameter.ai;
                     runtime_operator->params.insert({name, runtimeParameterIntArray});
                 }
                     break;
                 case int(RuntimeParameterType::kParameterFloatArray): {
-                    RuntimeParameterFloatArray *runtimeParameterFloatArray = new RuntimeParameterFloatArray();
+                    std::shared_ptr<RuntimeParameterFloatArray> runtimeParameterFloatArray = std::make_shared<RuntimeParameterFloatArray>();
                     runtimeParameterFloatArray->value = parameter.af;
                     runtime_operator->params.insert({name, runtimeParameterFloatArray});
                 }
                     break;
                 case int(RuntimeParameterType::kParameterStringArray): {
-                    RuntimeParameterStringArray *runtimeParameterStringArray = new RuntimeParameterStringArray();
+                    std::shared_ptr<RuntimeParameterStringArray> runtimeParameterStringArray = std::make_shared<RuntimeParameterStringArray>();
                     runtimeParameterStringArray->value = parameter.as;
                     runtime_operator->params.insert({name, runtimeParameterStringArray});
                 }

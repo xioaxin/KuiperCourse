@@ -18,9 +18,9 @@ namespace kuiper_infer {
         return this->nodes_;
     }
 
-    void ExpressionOperator::initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) {
+    void ExpressionOperator::initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) {
         CHECK(!runtimeParameter.empty()) << "The parameter of " << type << "is empty";
-        this->expr_ = dynamic_cast<RuntimeParameterString *>(runtimeParameter.at("expr"))->value;
+        this->expr_ = dynamic_cast<RuntimeParameterString *>(runtimeParameter.at("expr").get())->value;
         this->parser_ = std::make_shared<ExpressionParser>(this->expr_);
     }
 

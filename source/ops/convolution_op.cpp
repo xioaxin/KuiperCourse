@@ -48,17 +48,17 @@ namespace kuiper_infer {
         this->use_bias_ = use_bias;
     }
 
-    void ConvolutionOperator::initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) {
+    void ConvolutionOperator::initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) {
         CHECK(!runtimeParameter.empty()) << "The parameter of " << type << "is empty";
-        this->use_bias_ = dynamic_cast<RuntimeParameterBool *>(runtimeParameter.at("bias"))->value;
-        this->dilation_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("dilation"))->value;
-        this->groups_ = dynamic_cast<RuntimeParameterInt *>(runtimeParameter.at("groups"))->value;
-        this->in_channels_ = dynamic_cast<RuntimeParameterInt *>(runtimeParameter.at("in_channels"))->value;
-        this->out_channels_ = dynamic_cast<RuntimeParameterInt *>(runtimeParameter.at("out_channels"))->value;
-        this->padding_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("padding"))->value;
-        this->padding_mode_ = dynamic_cast<RuntimeParameterString *>(runtimeParameter.at("padding_mode"))->value;
-        this->kernel_size_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("kernel_size"))->value;
-        this->stride_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("stride"))->value;
+        this->use_bias_ = dynamic_cast<RuntimeParameterBool *>(runtimeParameter.at("bias").get())->value;
+        this->dilation_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("dilation").get())->value;
+        this->groups_ = dynamic_cast<RuntimeParameterInt *>(runtimeParameter.at("groups").get())->value;
+        this->in_channels_ = dynamic_cast<RuntimeParameterInt *>(runtimeParameter.at("in_channels").get())->value;
+        this->out_channels_ = dynamic_cast<RuntimeParameterInt *>(runtimeParameter.at("out_channels").get())->value;
+        this->padding_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("padding").get())->value;
+        this->padding_mode_ = dynamic_cast<RuntimeParameterString *>(runtimeParameter.at("padding_mode").get())->value;
+        this->kernel_size_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("kernel_size").get())->value;
+        this->stride_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("stride").get())->value;
     }
 
     void ConvolutionOperator::initialAttribute(
@@ -129,5 +129,5 @@ namespace kuiper_infer {
         padding_mode_ = paddingMode;
     }
 
-    RuntimeOperatorRegistererWrapper kConvolutionOperator(OpType::kOperatorConvolution,ConvolutionOperator::CreateInstance);
+    RuntimeOperatorRegistererWrapper kConvolutionOperator(OpType::kOperatorConvolution, ConvolutionOperator::CreateInstance);
 }

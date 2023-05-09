@@ -39,6 +39,7 @@ namespace kuiper_infer {
         kOperatorUpSample = 18,
         kOperatorInput = 19,
         kOperatorOutput = 20,
+        kOperatorView = 21,
     };
     static std::unordered_map<std::string, kuiper_infer::OpType> PNNX_TO_KUIPER_TABLE = {
             {"nn.Conv2d",            OpType::kOperatorConvolution},
@@ -50,7 +51,7 @@ namespace kuiper_infer {
             {"pnnx.Output",          OpType::kOperatorOutput},
             {"pnnx.Expression",      OpType::kOperatorExpression},
             {"torch.flatten",        OpType::kOperatorFlatten},
-            {"Tensor.view",          OpType::kOperatorFlatten},
+            {"Tensor.view",          OpType::kOperatorView},
     };
 
     class RuntimeOperator {
@@ -58,7 +59,6 @@ namespace kuiper_infer {
         int32_t meet_num = 0;
         RuntimeOperator();
         RuntimeOperator(OpType opType);
-
         virtual ~RuntimeOperator();
         OpType op_type_ = OpType::kOperatorUnknown;
         std::string name;                       // 计算节点名称
@@ -69,9 +69,9 @@ namespace kuiper_infer {
         std::map<std::string, std::shared_ptr<RuntimeOperand>> input_operands;
         std::vector<std::shared_ptr<RuntimeOperand>> input_operands_seq;
         std::map<std::string, std::shared_ptr<RuntimeOperator>> output_operators;
-        std::map<std::string, RuntimeParameter *> params;
+        std::map<std::string, std::shared_ptr<RuntimeParameter>> params;
         std::map<std::string, std::shared_ptr<RuntimeAttribute>> attribute;
-        virtual void initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) = 0;
+        virtual void initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) = 0;
         virtual void initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) = 0;
 //        RuntimeOperator(const RuntimeOperator &runtimeOperator);
     };

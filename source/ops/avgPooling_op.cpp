@@ -11,12 +11,12 @@ namespace kuiper_infer {
             (kernel_size), padding_size_(padding_size), stride_(stride), dilation_(dilation) {
     }
 
-    void AvgPoolingOperator::initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) {
+    void AvgPoolingOperator::initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) {
         CHECK(!runtimeParameter.empty()) << "The parameter of " << type << "is empty";
-        this->kernel_size_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("kernel_size"))->value;
-        this->dilation_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("dilation"))->value;
-        this->padding_size_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("padding"))->value;
-        this->stride_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("stride"))->value;
+        this->kernel_size_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("kernel_size").get())->value;
+        this->dilation_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("dilation").get())->value;
+        this->padding_size_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("padding").get())->value;
+        this->stride_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("stride").get())->value;
     }
 
     void AvgPoolingOperator::initialAttribute(

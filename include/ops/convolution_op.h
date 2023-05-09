@@ -17,19 +17,16 @@ namespace kuiper_infer {
         explicit ConvolutionOperator(uint32_t in_channels, uint32_t out_channels, const std::vector<int> &kernel_size = {3, 3},
                                      uint32_t groups = 1, const std::vector<int> &padding = {0, 0}, const std::vector<int> &stride = {1, 1},
                                      const std::vector<int> &dilation = {0, 0}, bool use_bias = false, std::string padding_mode = "same");
-
-        ~ConvolutionOperator() {
-        }
-
+        ~ConvolutionOperator() override = default;
         void setWeights(std::vector<std::shared_ptr<ftensor>> weight);
         void setBias(std::vector<std::shared_ptr<ftensor>> bias);
-        const std::vector<std::shared_ptr<ftensor >> &getWeight() const;
-        const std::vector<std::shared_ptr<ftensor >> &getBias() const;
+        [[nodiscard]] const std::vector<std::shared_ptr<ftensor >> &getWeight() const;
+        [[nodiscard]] const std::vector<std::shared_ptr<ftensor >> &getBias() const;
         bool isUseBias() const;
         void setUseBias(bool use_bias);
         const uint32_t getGroups();
         void setGroups(uint32_t groups);
-        void initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) override;
+        void initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) override;
         void initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) override;
         static std::shared_ptr<RuntimeOperator> CreateInstance(const std::string type);
     private:
@@ -43,19 +40,19 @@ namespace kuiper_infer {
         uint32_t out_channels_ = 0;
         std::string padding_mode_;
     public:
-        const std::vector<int> &getStride() const;
+        [[nodiscard]] const std::vector<int> &getStride() const;
         void setStride(const std::vector<int> &stride);
-        const std::vector<int> &getPadding() const;
+        [[nodiscard]] const std::vector<int> &getPadding() const;
         void setPadding(const std::vector<int> &padding);
-        const std::vector<int> &getDilation() const;
+        [[nodiscard]] const std::vector<int> &getDilation() const;
         void setDilation(const std::vector<int> &dilation);
-        const std::vector<int> &getKernelSize() const;
+        [[nodiscard]] const std::vector<int> &getKernelSize() const;
         void setKernelSize(const std::vector<int> &kernelSize);
-        uint32_t getInChannels() const;
+        [[nodiscard]] uint32_t getInChannels() const;
         void setInChannels(uint32_t inChannels);
-        uint32_t getOutChannels() const;
+        [[nodiscard]] uint32_t getOutChannels() const;
         void setOutChannels(uint32_t outChannels);
-        const std::string &getPaddingMode() const;
+        [[nodiscard]] const std::string &getPaddingMode() const;
         void setPaddingMode(const std::string &paddingMode);
     private:
         std::vector<std::shared_ptr<ftensor>> weight_;

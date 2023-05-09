@@ -18,7 +18,6 @@ namespace kuiper_infer {
         explicit LinearOperator(const uint32_t input_feature, uint32_t output_feature);
 
         virtual ~LinearOperator() {
-
         };
         void setInputFeature(const uint32_t input_feature);
         const uint32_t getInputFeature() const;
@@ -31,9 +30,8 @@ namespace kuiper_infer {
         void setWeight(const std::vector<sftensor> &weight);
         const std::vector<sftensor> &getBias() const;
         void setBias(const std::vector<sftensor> &bias);
-        void initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) override;
-        void
-        initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) override;
+        void initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) override;
+        void initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) override;
         static std::shared_ptr<RuntimeOperator> CreateInstance(const std::string type);
     private:
         std::vector<sftensor> weight_;

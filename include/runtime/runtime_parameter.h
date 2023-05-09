@@ -21,49 +21,61 @@ namespace kuiper_infer {
     struct RuntimeParameterInt : public RuntimeParameter {
         RuntimeParameterInt() : RuntimeParameter(RuntimeParameterType::kParameterInt) {}
 
-        ~RuntimeParameterInt() = default;
+        ~RuntimeParameterInt() override = default;
         int value = 0;
     };
 
     struct RuntimeParameterFloat : public RuntimeParameter {
         RuntimeParameterFloat() : RuntimeParameter(RuntimeParameterType::kParameterFloat) {}
 
-        ~RuntimeParameterFloat() = default;
+        ~RuntimeParameterFloat() override = default;
         float value = 0.f;
     };
 
     struct RuntimeParameterString : public RuntimeParameter {
         RuntimeParameterString() : RuntimeParameter(RuntimeParameterType::kParameterString) {}
 
-        ~RuntimeParameterString() = default;
+        ~RuntimeParameterString() override = default;
         std::string value;
     };
 
     struct RuntimeParameterIntArray : public RuntimeParameter {
         RuntimeParameterIntArray() : RuntimeParameter(RuntimeParameterType::kParameterIntArray) {}
 
-        ~RuntimeParameterIntArray() = default;
+        ~RuntimeParameterIntArray() override {
+            std::vector<int> item;
+            item.swap(value);
+        }
+
         std::vector<int> value;
     };
 
     struct RuntimeParameterFloatArray : public RuntimeParameter {
         RuntimeParameterFloatArray() : RuntimeParameter(RuntimeParameterType::kParameterFloatArray) {}
 
-        ~RuntimeParameterFloatArray() = default;
+        ~RuntimeParameterFloatArray() override {
+            std::vector<float> item;
+            item.swap(value);
+        }
+
         std::vector<float> value;
     };
 
     struct RuntimeParameterStringArray : public RuntimeParameter {
         RuntimeParameterStringArray() : RuntimeParameter(RuntimeParameterType::kParameterStringArray) {}
 
-        ~RuntimeParameterStringArray() = default;
+        ~RuntimeParameterStringArray() override {
+            std::vector<std::string> item;
+            item.swap(value);
+        }
+
         std::vector<std::string> value;
     };
 
     struct RuntimeParameterBool : public RuntimeParameter {
         RuntimeParameterBool() : RuntimeParameter(RuntimeParameterType::kParameterBool) {}
 
-        ~RuntimeParameterBool() = default;
+        ~RuntimeParameterBool() override = default;
         bool value = false;
     };
 }

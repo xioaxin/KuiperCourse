@@ -35,7 +35,7 @@ namespace kuiper_infer {
         };
 
         static std::vector<sftensor> get_value_matrix(std::shared_ptr<RuntimeAttribute> runtimeAttribute, uint32_t batch_sizes) {
-            return runtimeAttribute->copy_data_vector<float>({1,static_cast<unsigned int>(runtimeAttribute->shape[0]),
+            return runtimeAttribute->copy_data_vector<float>({1, static_cast<unsigned int>(runtimeAttribute->shape[0]),
                                                               static_cast<unsigned int>(runtimeAttribute->shape[1])}, batch_sizes);
         };
         template<typename T>
@@ -71,15 +71,13 @@ namespace kuiper_infer {
             if (item == 0)break;
             size *= item;
         }
-        T *data = (T *) malloc(size);
         std::shared_ptr<ftensor> data_ = std::make_shared<ftensor>(shape_);
         uint32_t batch_sizes = this->shape[0];
         if (this->shape.size() == 2)batch_sizes = 1;
         std::vector<std::shared_ptr<Tensor<T>>> weights(batch_sizes);
 #pragma omp parallel for num_threads(batch_sizes)
         for (int batch_size = 0; batch_size < batch_sizes; ++batch_size) {
-            memcpy(data, (float *) weight_data.data() + batch_size * size, size);
-            data_->fill(data, false);
+            memcpy((float *) data_->data().mem, (float *) (weight_data.data() + batch_size * size), size);
             weights[batch_size] = data_;
         }
         return weights;
@@ -92,13 +90,11 @@ namespace kuiper_infer {
             if (item == 0)break;
             size *= item;
         }
-        T *data = (T *) malloc(size);
         std::shared_ptr<ftensor> data_ = std::make_shared<ftensor>(shape_);
         std::vector<std::shared_ptr<Tensor<T>>> weights(batch_sizes);
 #pragma omp parallel for num_threads(batch_sizes)
         for (int batch_size = 0; batch_size < batch_sizes; ++batch_size) {
-            memcpy(data, (float *) weight_data.data() + batch_size * size, size);
-            data_->fill(data, false);
+            memcpy((float *) data_->data().mem, (float *) weight_data.data(), size);
             weights[batch_size] = data_;
         }
         return weights;

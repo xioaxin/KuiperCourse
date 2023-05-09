@@ -6,7 +6,7 @@
 namespace kuiper_infer {
     HardSigmoidOperator::HardSigmoidOperator() : RuntimeOperator(OpType::kOperatorHardSigmoid) {}
 
-    void HardSigmoidOperator::initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) {
+    void HardSigmoidOperator::initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) {
     }
 
     void HardSigmoidOperator::initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) {

@@ -9,7 +9,7 @@ namespace kuiper_infer {
 
     SoftMaxOperator::SoftMaxOperator(int dim) : RuntimeOperator(OpType::kOperatorSoftMax), dim_(dim) {}
 
-    void SoftMaxOperator::initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) {
+    void SoftMaxOperator::initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) {
     }
 
     void SoftMaxOperator::initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) {

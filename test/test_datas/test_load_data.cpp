@@ -49,7 +49,7 @@ TEST(test_data_load, load_csv_with_head1) {
 
 TEST(test_data_load, load_image) {
     using namespace kuiper_infer;
-    const std::string &file_path = "../tmp/3.jpg";
+    const std::string &file_path = "../tmp/1.jpg";
     struct stat buffer;
     CHECK((stat(file_path.c_str(), &buffer) == 0)) << "The path of image is illegal";
     cv::Mat image = cv::imread(file_path);

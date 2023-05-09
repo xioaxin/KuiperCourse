@@ -16,10 +16,10 @@ namespace kuiper_infer {
         this->dim_ = dim;
     }
 
-    void CatOperator::initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) {
+    void CatOperator::initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) {
     }
 
-    void CatOperator::initialAttribute(const std::map<std::string,std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) {
+    void CatOperator::initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) {
     }
 
     std::shared_ptr<RuntimeOperator> CatOperator::CreateInstance(const std::string type) {

@@ -17,7 +17,7 @@ namespace kuiper_infer {
         explicit Relu6Operator(float thresh);
         void set_thresh(const float thresh);
         float get_thresh() const;
-        void initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) override;
+        void initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) override;
         void initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) override;
         static std::shared_ptr<RuntimeOperator> CreateInstance(const std::string type);
     private:

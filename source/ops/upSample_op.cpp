@@ -35,7 +35,7 @@ namespace kuiper_infer {
         return this->upSampleMode1_;
     }
 
-    void UpSampleOperator::initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) {
+    void UpSampleOperator::initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) {
     }
 
     void UpSampleOperator::initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) {

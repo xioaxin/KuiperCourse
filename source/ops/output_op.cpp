@@ -6,7 +6,7 @@
 namespace kuiper_infer {
     OutputOperator::OutputOperator() : RuntimeOperator(OpType::kOperatorOutput) {}
 
-    void OutputOperator::initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) {
+    void OutputOperator::initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) {
     }
 
     void OutputOperator::initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) {

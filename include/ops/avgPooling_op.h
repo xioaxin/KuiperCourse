@@ -17,7 +17,7 @@ namespace kuiper_infer {
         ~AvgPoolingOperator() {};
         explicit AvgPoolingOperator(std::vector<int> &kernel_size, std::vector<int> padding_size,
                                     std::vector<int> &stride, std::vector<int> &dilation);
-        void initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) override;
+        void initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) override;
         void initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) override;
         static std::shared_ptr<RuntimeOperator> CreateInstance(std::string type);
     private:

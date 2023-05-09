@@ -37,11 +37,11 @@ namespace kuiper_infer {
         return this->use_bias_;
     }
 
-    void LinearOperator::initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) {
+    void LinearOperator::initialParameter(const std::map<std::string,std::shared_ptr<RuntimeParameter>> &runtimeParameter) {
         CHECK(!runtimeParameter.empty()) << "The parameter of " << type << "is empty";
-        this->use_bias_ = dynamic_cast<RuntimeParameterBool *>(runtimeParameter.at("bias"))->value;
-        this->input_feature_ = dynamic_cast<RuntimeParameterInt *>(runtimeParameter.at("in_features"))->value;
-        this->output_feature_ = dynamic_cast<RuntimeParameterInt *>(runtimeParameter.at("out_features"))->value;
+        this->use_bias_ = dynamic_cast<RuntimeParameterBool *>(runtimeParameter.at("bias").get())->value;
+        this->input_feature_ = dynamic_cast<RuntimeParameterInt *>(runtimeParameter.at("in_features").get())->value;
+        this->output_feature_ = dynamic_cast<RuntimeParameterInt *>(runtimeParameter.at("out_features").get())->value;
     }
 
     void

@@ -36,7 +36,7 @@ namespace kuiper_infer {
         this->affine_beta_ = affine_beta;
     }
 
-    void BatchNormOperator::initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) {
+    void BatchNormOperator::initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) {
     }
 
     void BatchNormOperator::initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) {

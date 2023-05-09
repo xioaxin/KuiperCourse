@@ -6,7 +6,7 @@
 namespace kuiper_infer {
     SiluOperator::SiluOperator() : RuntimeOperator(OpType::kOperatorSilu) {}
 
-    void SiluOperator::initialParameter(const std::map<std::string, RuntimeParameter *> &runtimeParameter) {
+    void SiluOperator::initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) {
     }
 
     void SiluOperator::initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) {
