@@ -8,7 +8,7 @@ namespace kuiper_infer {
 
     CatOperator::CatOperator(uint32_t dim) : RuntimeOperator(OpType::kOperatorCat), dim_(dim) {}
 
-    const uint32_t CatOperator::getDim() const {
+    uint32_t CatOperator::getDim() const {
         return dim_;
     }
 

@@ -16,6 +16,7 @@ aux_source_directory(../source/ops DIR_OPS)
 aux_source_directory(../source/runtime DIR_RUNTIME)
 aux_source_directory(../source/parser DIR_PARSER)
 aux_source_directory(../source/transform DIR_TRANSFORM)
+aux_source_directory(../source/cuda DIR_CUDA)
 
 
 include_directories(${OpenCV_INCLUDE_DIRS})
@@ -23,8 +24,9 @@ message(STATUS "OpenCV library status:")
 message(STATUS "    version: ${OpenCV_VERSION}")
 message(STATUS "    libraries: ${OpenCV_LIBS}")
 message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}")
-add_executable(test_kuiper_course ${DIR_TEST} ${DIR_TEST_LAYERS} ${DIR_TEST_TRANSFORMS} ${DIR_TEST_DATAS} ${DIR_TEST_MODELS}
-        ${DIR_DATA} ${DIR_LAYER} ${DIR_RUNTIME} ${DIR_FACTORY} ${DIR_OPS} ${DIR_PARSER} ${DIR_TRANSFORM})
 
+add_executable(test_kuiper_course ${DIR_TEST} ${DIR_TEST_LAYERS} ${DIR_TEST_TRANSFORMS} ${DIR_TEST_DATAS} ${DIR_TEST_MODELS}
+        ${DIR_DATA} ${DIR_LAYER} ${DIR_RUNTIME} ${DIR_FACTORY} ${DIR_OPS} ${DIR_PARSER} ${DIR_TRANSFORM} ${DIR_CUDA})
+set_target_properties(test_kuiper_course PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 link_directories(/usr/local/lib/)
 target_link_libraries(test_kuiper_course ${OpenCV_LIBS} ${link_lib} ${link_math_lib} OpenMP::OpenMP_CXX)

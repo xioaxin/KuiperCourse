@@ -72,6 +72,5 @@ namespace kuiper_infer {
         Forwards(layer_input_datas, this->op_->output_operands->datas);
     }
 
-    LayerRegistererWrapper kAdaptiveAvgPoolingLayer(OpType::kOperatorAdaptiveAvgPooling,
-                                                    AdaptiveAvgPoolingLayer::CreateInstance);
+    LayerRegistererWrapper kAdaptiveAvgPoolingLayer(OpType::kOperatorAdaptiveAvgPooling, AdaptiveAvgPoolingLayer::CreateInstance);
 }

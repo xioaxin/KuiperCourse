@@ -4,7 +4,7 @@
 #include <glog/logging.h>
 #include <stack>
 #include "ops/expression_op.h"
-#include "layer/layer.h"
+#include "layer/layer_layer.h"
 #include "layer/expression_layer.h"
 #include "factory/layer_factory.hpp"
 

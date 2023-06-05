@@ -15,7 +15,7 @@ namespace kuiper_infer {
         TransformBase(std::string transform_name) : transform_name_(transform_name) {};
 
         TransformBase() {};
-        virtual sftensor forward(sftensor &inputs) = 0;
+        virtual sftensor forward(const sftensor &inputs) = 0;
         virtual ~TransformBase() = default;
     private:
         std::string transform_name_;
@@ -23,12 +23,11 @@ namespace kuiper_infer {
 
     class TransformFactory {
     public:
-        TransformFactory(std::vector<TransformBase*> &transformBase) : transforms_(transformBase) {};
+        TransformFactory(std::vector<std::shared_ptr<TransformBase>> &transformBase) : transforms_(std::move(transformBase)) {};
         void forward(const std::vector<sftensor> &inputs, std::vector<sftensor> &outputs);
-
         ~TransformFactory() {};
     private:
-        std::vector<TransformBase*> transforms_;
+        std::vector<std::shared_ptr<TransformBase>> transforms_;
     };
 }
 #endif //KUIPER_COURSE_TRANSFORM_FACTORY_H

@@ -10,6 +10,7 @@
 #include "data/tensor.hpp"
 #include <cstdint>
 #include "factory/operator_factory.h"
+
 namespace kuiper_infer {
     class BatchNormOperator : public RuntimeOperator {
     public:
@@ -22,11 +23,11 @@ namespace kuiper_infer {
         void setAffineAlpha(const std::vector<float> &affine_alpha);
         void setAffineBata(const std::vector<float> &affine_beta);
         void setEps(float eps);
-        const float getEps() const;
-        const sftensor getMeanValue() const;
-        const sftensor getVarValue() const;
-        const std::vector<float> getAffineAlpha() const;
-        const std::vector<float> getAffineBata() const;
+        float getEps() const;
+        sftensor getMeanValue() const;
+        sftensor getVarValue() const;
+        std::vector<float> getAffineAlpha() const;
+        std::vector<float> getAffineBata() const;
         void initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) override;
         void initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) override;
         static std::shared_ptr<RuntimeOperator> CreateInstance(const std::string type);

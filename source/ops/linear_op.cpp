@@ -6,14 +6,14 @@
 namespace kuiper_infer {
     LinearOperator::LinearOperator() : RuntimeOperator(OpType::kOperatorLinear) {}
 
-    LinearOperator::LinearOperator(const uint32_t input_feature, uint32_t output_feature) : RuntimeOperator(
+    LinearOperator::LinearOperator(uint32_t input_feature, uint32_t output_feature) : RuntimeOperator(
             OpType::kOperatorLinear), input_feature_(input_feature), output_feature_(output_feature) {};
 
-    const uint32_t LinearOperator::getInputFeature() const {
+    uint32_t LinearOperator::getInputFeature() const {
         return input_feature_;
     }
 
-    const uint32_t LinearOperator::getOutputFeature() const {
+    uint32_t LinearOperator::getOutputFeature() const {
         return output_feature_;
     }
 
@@ -25,7 +25,7 @@ namespace kuiper_infer {
         this->output_feature_ = output_feature;
     }
 
-    const bool LinearOperator::isUseBias() const {
+    bool LinearOperator::isUseBias() const {
         return this->use_bias_;
     }
 
@@ -33,11 +33,11 @@ namespace kuiper_infer {
         this->use_bias_ = use_bias;
     }
 
-    const bool LinearOperator::getUseBias() const {
+    bool LinearOperator::getUseBias() const {
         return this->use_bias_;
     }
 
-    void LinearOperator::initialParameter(const std::map<std::string,std::shared_ptr<RuntimeParameter>> &runtimeParameter) {
+    void LinearOperator::initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) {
         CHECK(!runtimeParameter.empty()) << "The parameter of " << type << "is empty";
         this->use_bias_ = dynamic_cast<RuntimeParameterBool *>(runtimeParameter.at("bias").get())->value;
         this->input_feature_ = dynamic_cast<RuntimeParameterInt *>(runtimeParameter.at("in_features").get())->value;
@@ -49,7 +49,7 @@ namespace kuiper_infer {
         if (runtimeAttribute.find("weight") != runtimeAttribute.end())
             setWeight(RuntimeAttribute::get_value_matrix(runtimeAttribute.at("weight"), this->input_operands_seq[0]->shapes[0]));
         if (use_bias_ && runtimeAttribute.find("bias") != runtimeAttribute.end())
-            setBias(RuntimeAttribute::get_value_vector(runtimeAttribute.at("bias"),this->input_operands_seq[0]->shapes[0]));
+            setBias(RuntimeAttribute::get_value_vector(runtimeAttribute.at("bias"), this->input_operands_seq[0]->shapes[0]));
     }
 
     std::shared_ptr<RuntimeOperator> LinearOperator::CreateInstance(const std::string type) {
@@ -58,7 +58,7 @@ namespace kuiper_infer {
         return runtimeOperator;
     }
 
-    const std::vector<sftensor> &LinearOperator::getWeight() const {
+    std::vector<sftensor> LinearOperator::getWeight() const {
         return weight_;
     }
 
@@ -66,7 +66,7 @@ namespace kuiper_infer {
         weight_ = std::move(weight);
     }
 
-    const std::vector<sftensor> &LinearOperator::getBias() const {
+    std::vector<sftensor> LinearOperator::getBias() const {
         return bias_;
     }
 

@@ -19,11 +19,11 @@ namespace kuiper_infer {
         this->scale_w_ = scale_w;
     }
 
-    const float UpSampleOperator::getScaleH() const {
+    float UpSampleOperator::getScaleH() const {
         return scale_h_;
     }
 
-    const float UpSampleOperator::getScaleW() const {
+    float UpSampleOperator::getScaleW() const {
         return scale_w_;
     }
 
@@ -31,7 +31,7 @@ namespace kuiper_infer {
         this->upSampleMode1_ = upSampleMode;
     }
 
-    const UpSampleMode UpSampleOperator::getUpSampleModel() const {
+    UpSampleMode UpSampleOperator::getUpSampleModel() const {
         return this->upSampleMode1_;
     }
 
@@ -40,6 +40,7 @@ namespace kuiper_infer {
 
     void UpSampleOperator::initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) {
     }
+
     std::shared_ptr<RuntimeOperator> UpSampleOperator::CreateInstance(const std::string type) {
         CHECK(PNNX_TO_KUIPER_TABLE[type] == OpType::kOperatorUpSample);
         std::shared_ptr<RuntimeOperator> runtimeOperator = std::make_shared<UpSampleOperator>();

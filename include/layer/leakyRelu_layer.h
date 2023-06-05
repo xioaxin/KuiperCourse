@@ -5,7 +5,7 @@
 #ifndef KUIPER_COURSE_LEAKYRELU_LAYER_H
 #define KUIPER_COURSE_LEAKYRELU_LAYER_H
 
-#include "layer.h"
+#include "layer_layer.h"
 #include "ops/leakyRelu_op.h"
 
 namespace kuiper_infer {
@@ -18,7 +18,8 @@ namespace kuiper_infer {
         void Forwards(const std::vector<std::shared_ptr<Tensor<float>>> &inputs,
                       std::vector<std::shared_ptr<Tensor<float>>> &outputs) override;
         void Forwards() override;
-        // 下节的内容，不用管
+        void ForwardsCuda(const std::vector<std::shared_ptr<Tensor<float>>> &inputs,
+                          std::vector<std::shared_ptr<Tensor<float>>>&outputs) override;
         static std::shared_ptr<Layer> CreateInstance(const std::shared_ptr<RuntimeOperator> &op);
     private:
         std::unique_ptr<LeakyReluOperator> op_;

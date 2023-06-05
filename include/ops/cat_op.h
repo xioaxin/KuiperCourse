@@ -16,7 +16,7 @@ namespace kuiper_infer {
         ~CatOperator() {};
         explicit CatOperator(uint32_t dim);
         void setDim(const uint32_t dim);
-        const uint32_t getDim() const;
+        uint32_t getDim() const;
         void initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) override;
         void initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) override;
         static std::shared_ptr<RuntimeOperator> CreateInstance(const std::string type);

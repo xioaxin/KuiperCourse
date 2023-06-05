@@ -6,15 +6,18 @@
 namespace kuiper_infer {
     LeakyReluOperator::LeakyReluOperator() : RuntimeOperator(OpType::kOperatorLeakyRelu) {}
 
-    LeakyReluOperator::LeakyReluOperator(float thresh) : RuntimeOperator(OpType::kOperatorLeakyRelu),
-                                                         thresh_(thresh) {};
+    LeakyReluOperator::LeakyReluOperator(float thresh, float alpha) : RuntimeOperator(OpType::kOperatorLeakyRelu),
+                                                                      thresh_(thresh), alpha_(alpha) {};
 
     void LeakyReluOperator::set_thresh(const float thresh) { thresh_ = thresh; }
 
     float LeakyReluOperator::get_thresh() const { return thresh_; }
 
-    void LeakyReluOperator::initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) {
-    }
+    float LeakyReluOperator::getAlpha() const { return alpha_; }
+
+    void LeakyReluOperator::setAlpha(float alpha) { this->alpha_ = alpha; }
+
+    void LeakyReluOperator::initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) {}
 
     void LeakyReluOperator::initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) {
     }

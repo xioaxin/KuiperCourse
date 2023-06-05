@@ -3,7 +3,7 @@
 //
 #include <glog/logging.h>
 #include "ops/sigmoid_op.h"
-#include "layer/layer.h"
+#include "layer/layer_layer.h"
 #include "layer/sigmoid_layer.h"
 #include "factory/layer_factory.hpp"
 

@@ -4,7 +4,7 @@
 
 #ifndef KUIPER_COURSE_INCLUDE_TENSOR_HPP_
 #define KUIPER_COURSE_INCLUDE_TENSOR_HPP_
-
+#define ARMA_ALLOW_FAKE_GCC
 #include <memory>
 #include <vector>
 #include <armadillo>
@@ -51,14 +51,14 @@ namespace kuiper_infer {
         void padding(const std::vector<uint32_t> &pads, float padding_value);
         void fill(float value);
         void fill(const std::vector<float> &values);
-        void fill(float *value,bool debug);
+        void fill(float *value, bool debug);
         void ones();
         void rand();
         void show();
         void flatten();
         void reRawShape(const std::vector<uint32_t> &shapes);
         void reRawView(const std::vector<uint32_t> &shapes);
-        // 逐元素操作
+        // cpu逐元素操作
         static std::shared_ptr<Tensor<float>> elementAdd(const std::shared_ptr<Tensor<float>> &tensor1,
                                                          const std::shared_ptr<Tensor<float>> &tensor2);
         static std::shared_ptr<Tensor<float>> elementMultiply(const std::shared_ptr<Tensor<float>> &tensor1,

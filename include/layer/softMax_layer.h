@@ -5,7 +5,7 @@
 #ifndef KUIPER_COURSE_SOFTMAX_LAYER_H
 #define KUIPER_COURSE_SOFTMAX_LAYER_H
 
-#include "layer.h"
+#include "layer_layer.h"
 #include "ops/softMax_op.h"
 #include <vector>
 
@@ -16,6 +16,8 @@ namespace kuiper_infer {
         explicit SoftMaxLayer(const std::shared_ptr<RuntimeOperator> &op);
         void Forwards(const std::vector<sftensor> &inputs, std::vector<sftensor> &outputs)override;
         void Forwards() override;
+        void ForwardsCuda(const std::vector<std::shared_ptr<Tensor<float>>> &inputs,
+                          std::vector<std::shared_ptr<Tensor<float>>>&outputs) override;
         static std::shared_ptr<Layer> CreateInstance(const std::shared_ptr<RuntimeOperator> &op);
     private:
         std::unique_ptr<SoftMaxOperator> op_;

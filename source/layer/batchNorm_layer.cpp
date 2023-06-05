@@ -21,8 +21,8 @@ namespace kuiper_infer {
         const auto &mean_value = this->op_->getMeanValue();
         const auto &var_value = this->op_->getVarValue();
         CHECK(mean_value->shapes() == var_value->shapes()) << "The shape of mean value and var value are not correct";
-        auto &affine_alpha = this->op_->getAffineAlpha();
-        auto &affine_beta = this->op_->getAffineBata();
+        auto affine_alpha = this->op_->getAffineAlpha();
+        auto affine_beta = this->op_->getAffineBata();
         CHECK(affine_alpha.size() == affine_beta.size()) << "The size of affine mean and affine var are not correct";
         const uint32_t batch_size = inputs.size();
         CHECK(inputs.size() == outputs.size()) << "The input size not equal with output size";

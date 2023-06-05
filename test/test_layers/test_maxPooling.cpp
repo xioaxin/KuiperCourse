@@ -4,7 +4,7 @@
 #include <glog/logging.h>
 #include <gtest/gtest.h>
 #include "ops/maxPooling_op.h"
-#include "layer/layer.h"
+#include "layer/layer_layer.h"
 #include "factory/layer_factory.hpp"
 
 TEST(test_layer, forward_maxpooling1) {

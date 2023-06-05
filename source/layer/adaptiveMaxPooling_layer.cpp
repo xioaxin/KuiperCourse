@@ -72,6 +72,5 @@ namespace kuiper_infer {
         Forwards(layer_input_datas, this->op_->output_operands->datas);
     }
 
-    LayerRegistererWrapper kAdaptiveMaxPoolingLayer(OpType::kOperatorAdaptiveMaxPooling,
-                                                    AdaptiveMaxPoolingLayer::CreateInstance);
+    LayerRegistererWrapper kAdaptiveMaxPoolingLayer(OpType::kOperatorAdaptiveMaxPooling, AdaptiveMaxPoolingLayer::CreateInstance);
 }

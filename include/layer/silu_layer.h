@@ -6,7 +6,7 @@
 #define KUIPER_COURSE_SILU_LAYER_H
 
 #include "ops/silu_op.h"
-#include "layer.h"
+#include "layer_layer.h"
 
 namespace kuiper_infer {
     class SiluLayer : public Layer {
@@ -15,6 +15,8 @@ namespace kuiper_infer {
         void Forwards(const std::vector<std::shared_ptr<Tensor<float>>> &inputs,
                       std::vector<std::shared_ptr<Tensor<float>>> &outputs)override;
         void Forwards() override;
+        void ForwardsCuda(const std::vector<std::shared_ptr<Tensor<float>>> &inputs,
+                          std::vector<std::shared_ptr<Tensor<float>>>&outputs) override;
         static std::shared_ptr<Layer> CreateInstance(const std::shared_ptr<RuntimeOperator> &op);
     private:
         std::unique_ptr<SiluOperator> op_;

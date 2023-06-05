@@ -29,6 +29,7 @@ namespace kuiper_infer {
         bool init(); //判断是否已经初始化计算图
         void build(const std::string &input_name, const std::string &output_name); //构建计算图
         RuntimeGraph(std::string param_path, std::string bin_path); //初始化计算图
+        ~RuntimeGraph(){};
         void set_bin_path(const std::string &bin_path);
         void set_param_path(const std::string &param_path);
         const std::string &param_path() const;

@@ -5,7 +5,7 @@
 #ifndef KUIPER_COURSE_ADAPTIVEAVGPOOLING_H
 #define KUIPER_COURSE_ADAPTIVEAVGPOOLING_H
 
-#include "layer/layer.h"
+#include "layer/layer_layer.h"
 #include <cstdint>
 #include "factory/operator_factory.h"
 

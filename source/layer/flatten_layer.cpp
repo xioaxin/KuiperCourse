@@ -32,9 +32,9 @@ namespace kuiper_infer {
                 if (j == end_dim)new_shape.push_back(new_dim);
             }
         }
-#pragma omp parallel for num_threads(current_shape.size())
+#pragma omp parallel for num_threads(batch_size)
         for (uint32_t i = 0; i < batch_size; ++i) {
-            auto &input_data = inputs.at(i);
+            auto input_data = inputs.at(i)->clone();
             input_data->reRawView(new_shape);           // 改变张量形状
             outputs[i] = input_data;
         }

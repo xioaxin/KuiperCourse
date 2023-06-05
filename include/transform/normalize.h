@@ -11,7 +11,7 @@ namespace kuiper_infer {
     class Normalize : public TransformBase {
     public:
         Normalize(const std::vector<float> &mean,const std::vector<float> &std, const float max_pixel_value = 255.0);
-        sftensor forward(kuiper_infer::sftensor &inputs) override;
+        sftensor forward(const kuiper_infer::sftensor &inputs) override;
         ~Normalize() override = default;
     private:
         std::vector<float> mean_;

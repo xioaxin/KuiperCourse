@@ -22,12 +22,12 @@ namespace kuiper_infer {
                                   const UpSampleMode upSampleMode = UpSampleMode::kModelNearest);
 
         ~UpSampleOperator() {};
-        const float getScaleH() const;
+        float getScaleH() const;
         void setScaleH(const float scale_h);
-        const float getScaleW() const;
+        float getScaleW() const;
         void setScaleW(const float scale_w);
         void setUpSampleModel(const UpSampleMode upSampleMode);
-        const UpSampleMode getUpSampleModel() const;
+        UpSampleMode getUpSampleModel() const;
         void initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) override;
         void initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) override;
         static std::shared_ptr<RuntimeOperator> CreateInstance(const std::string type);

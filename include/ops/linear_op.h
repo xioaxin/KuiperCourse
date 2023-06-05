@@ -15,24 +15,24 @@ namespace kuiper_infer {
     class LinearOperator : public RuntimeOperator {
     public:
         LinearOperator();
-        explicit LinearOperator(const uint32_t input_feature, uint32_t output_feature);
+        explicit LinearOperator(uint32_t input_feature, uint32_t output_feature);
 
         virtual ~LinearOperator() {
         };
-        void setInputFeature(const uint32_t input_feature);
-        const uint32_t getInputFeature() const;
-        void setOutputFeature(const uint32_t output_feature);
-        const uint32_t getOutputFeature() const;
-        const bool isUseBias() const;
-        void setUseBias(const bool use_bias);
-        const bool getUseBias() const;
-        const std::vector<sftensor> &getWeight() const;
+        void setInputFeature(uint32_t input_feature);
+        uint32_t getInputFeature() const;
+        void setOutputFeature(uint32_t output_feature);
+        uint32_t getOutputFeature() const;
+        bool isUseBias() const;
+        void setUseBias(bool use_bias);
+        bool getUseBias() const;
+        std::vector<sftensor> getWeight() const;
         void setWeight(const std::vector<sftensor> &weight);
-        const std::vector<sftensor> &getBias() const;
+        std::vector<sftensor> getBias() const;
         void setBias(const std::vector<sftensor> &bias);
         void initialParameter(const std::map<std::string, std::shared_ptr<RuntimeParameter>> &runtimeParameter) override;
         void initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) override;
-        static std::shared_ptr<RuntimeOperator> CreateInstance(const std::string type);
+        static std::shared_ptr<RuntimeOperator> CreateInstance(std::string type);
     private:
         std::vector<sftensor> weight_;
         std::vector<sftensor> bias_;

@@ -5,7 +5,7 @@
 #ifndef KUIPER_COURSE_BATCHNORM_LAYER_H
 #define KUIPER_COURSE_BATCHNORM_LAYER_H
 
-#include "layer.h"
+#include "layer_layer.h"
 #include "ops/batchNorm_op.h"
 
 namespace kuiper_infer {
@@ -15,6 +15,8 @@ namespace kuiper_infer {
         void Forwards(const std::vector<std::shared_ptr<ftensor>> &inputs,
                      std::vector<std::shared_ptr<ftensor>> &outputs);
         void Forwards() override;
+        void ForwardsCuda(const std::vector<std::shared_ptr<Tensor<float>>> &inputs,
+                          std::vector<std::shared_ptr<Tensor<float>>>&outputs) override;
         static std::shared_ptr<Layer> CreateInstance(const std::shared_ptr<RuntimeOperator> &op);
     private:
         std::shared_ptr<BatchNormOperator> op_;

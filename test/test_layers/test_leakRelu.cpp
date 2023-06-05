@@ -1,21 +1,22 @@
 //
 // Created by zpx on 2023/02/26.
 //
-#include "layer/hardSwish_layer.h"
+#include "ops/leakyRelu_op.h"
+#include "layer/leakyRelu_layer.h"
 #include <gtest/gtest.h>
 #include <glog/logging.h>
 
 TEST(test_layer, forward_leakRelu1) {
     using namespace kuiper_infer;
-    std::shared_ptr<RuntimeOperator> hardHardSwish_op = std::make_shared<HardSwishOperator>();
+    std::shared_ptr<RuntimeOperator> leakyRelu_op = std::make_shared<LeakyReluOperator>(0);
     std::shared_ptr<Tensor<float>> input = std::make_shared<Tensor<float>>(1, 1, 3);
-    input->index(0) = 9.f; //output对应的应该是0
-    input->index(1) = -3.f; //output对应的应该是0
-    input->index(2) = 6.f; //output对应的应该是1
+    input->index(0) = 9.f;
+    input->index(1) = -3.f;
+    input->index(2) = 6.f;
     std::vector<std::shared_ptr<Tensor<float>>> inputs(1); //作为一个批次去处理
     std::vector<std::shared_ptr<Tensor<float>>> outputs(1); //放结果
     inputs[0] = input;
-    HardSwishLayer layer(hardHardSwish_op);
+    LeakyReluLayer layer(leakyRelu_op);
     layer.Forwards(inputs, outputs);
     ASSERT_EQ(outputs.size(), 1);
     for (int i = 0; i < outputs.size(); ++i) {
@@ -23,15 +24,15 @@ TEST(test_layer, forward_leakRelu1) {
         outputs[i]->show();
 #endif
         ASSERT_EQ(outputs.at(i)->index(0), 9.f);
-        ASSERT_EQ(outputs.at(i)->index(1), 0.f);
+        ASSERT_EQ(outputs.at(i)->index(1), -0.03f);
         ASSERT_EQ(outputs.at(i)->index(2), 6.f);
     }
 }
 
 TEST(test_layer, forward_leakRelu2) {
     using namespace kuiper_infer;
-    std::shared_ptr<RuntimeOperator> hardSwish_op = std::make_shared<HardSwishOperator>();
-    std::shared_ptr<Layer> HardSwishLayer = LayerRegisterer::CreateLayer(hardSwish_op);
+    std::shared_ptr<RuntimeOperator> leakyRelu_op = std::make_shared<LeakyReluOperator>(0);
+    std::shared_ptr<Layer> leakyReluLayer = LayerRegisterer::CreateLayer(leakyRelu_op);
     std::shared_ptr<Tensor<float>> input = std::make_shared<Tensor<float>>(1, 1, 3);
     input->index(0) = 9.f; //output对应的应该是0
     input->index(1) = -3.f; //output对应的应该是0
@@ -41,14 +42,64 @@ TEST(test_layer, forward_leakRelu2) {
     for (int i = 0; i < MAX_TEST_ITERATION; ++i) {
         inputs[i] = input;
     }
-    HardSwishLayer->Forwards(inputs, outputs);
+    leakyReluLayer->Forwards(inputs, outputs);
     ASSERT_EQ(outputs.size(), MAX_TEST_ITERATION);
     for (int i = 0; i < outputs.size(); ++i) {
 #ifdef DEBUG
         outputs[i]->show();
 #endif
         ASSERT_EQ(outputs.at(i)->index(0), 9.f);
-        ASSERT_EQ(outputs.at(i)->index(1), 0.f);
+        ASSERT_EQ(outputs.at(i)->index(1), -0.03f);
+        ASSERT_EQ(outputs.at(i)->index(2), 6.f);
+    }
+}
+
+TEST(test_layer, forward_leakRelu_cuda1) {
+    using namespace kuiper_infer;
+    float thresh = 0.f;
+    std::shared_ptr<RuntimeOperator> leakyRelu_op = std::make_shared<LeakyReluOperator>(thresh);
+    std::shared_ptr<Tensor<float>> input = std::make_shared<Tensor<float>>(1, 1, 3);
+    input->index(0) = 9.f;
+    input->index(1) = -3.f;
+    input->index(2) = 6.f;
+    std::vector<std::shared_ptr<Tensor<float>>> inputs(1);
+    std::vector<std::shared_ptr<Tensor<float>>> outputs(1);
+    inputs[0] = input;
+    LeakyReluLayer layer(leakyRelu_op);
+    layer.ForwardsCuda(inputs, outputs);
+    ASSERT_EQ(outputs.size(), 1);
+    for (int i = 0; i < outputs.size(); ++i) {
+#ifdef DEBUG
+        outputs[i]->show();
+#endif
+        ASSERT_EQ(outputs.at(i)->index(0), 9.f);
+        ASSERT_EQ(outputs.at(i)->index(1), -0.03f);
+        ASSERT_EQ(outputs.at(i)->index(2), 6.f);
+    }
+}
+
+TEST(test_layer, forward_leakRelu_cuda2) {
+    using namespace kuiper_infer;
+    float thresh = 0.f;
+    std::shared_ptr<RuntimeOperator> leakyRelu_op = std::make_shared<LeakyReluOperator>(thresh);
+    std::shared_ptr<Layer> leakyReluLayer = LayerRegisterer::CreateLayer(leakyRelu_op);
+    std::shared_ptr<Tensor<float>> input = std::make_shared<Tensor<float>>(1, 1, 3);
+    input->index(0) = 9.f; //output对应的应该是0
+    input->index(1) = -3.f; //output对应的应该是0
+    input->index(2) = 6.f; //output对应的应该是1
+    std::vector<std::shared_ptr<Tensor<float>>> inputs(MAX_TEST_ITERATION);
+    std::vector<std::shared_ptr<Tensor<float>>> outputs(MAX_TEST_ITERATION);
+    for (int i = 0; i < MAX_TEST_ITERATION; ++i) {
+        inputs[i] = input;
+    }
+    leakyReluLayer->ForwardsCuda(inputs, outputs);
+    ASSERT_EQ(outputs.size(), MAX_TEST_ITERATION);
+    for (int i = 0; i < outputs.size(); ++i) {
+#ifdef DEBUG
+        outputs[i]->show();
+#endif
+        ASSERT_EQ(outputs.at(i)->index(0), 9.f);
+        ASSERT_EQ(outputs.at(i)->index(1), -0.03f);
         ASSERT_EQ(outputs.at(i)->index(2), 6.f);
     }
 }

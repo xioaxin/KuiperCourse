@@ -16,7 +16,7 @@ namespace kuiper_infer {
             in_channels_(in_channels),
             out_channels_(out_channels), padding_mode_(padding_mode) {}
 
-    const uint32_t ConvolutionOperator::getGroups() {
+    uint32_t ConvolutionOperator::getGroups() const {
         return groups_;
     }
 
@@ -24,7 +24,7 @@ namespace kuiper_infer {
         this->groups_ = groups;
     }
 
-    const std::vector<std::shared_ptr<ftensor>> &ConvolutionOperator::getWeight() const {
+    std::vector<std::shared_ptr<ftensor>> ConvolutionOperator::getWeight() const {
         return this->weight_;
     }
 
@@ -32,7 +32,7 @@ namespace kuiper_infer {
         this->weight_ = weight;
     }
 
-    const std::vector<std::shared_ptr<ftensor>> &ConvolutionOperator::getBias() const {
+    std::vector<std::shared_ptr<ftensor>> ConvolutionOperator::getBias() const {
         return this->bias_;
     }
 
@@ -61,8 +61,7 @@ namespace kuiper_infer {
         this->stride_ = dynamic_cast<RuntimeParameterIntArray *>(runtimeParameter.at("stride").get())->value;
     }
 
-    void ConvolutionOperator::initialAttribute(
-            const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) {
+    void ConvolutionOperator::initialAttribute(const std::map<std::string, std::shared_ptr<RuntimeAttribute>> &runtimeAttribute) {
         setWeights(RuntimeAttribute::get_value(runtimeAttribute.at("weight")));
         if (use_bias_) setBias(RuntimeAttribute::get_value(runtimeAttribute.at("bias")));
     }
@@ -73,7 +72,7 @@ namespace kuiper_infer {
         return convOperator;
     }
 
-    const std::vector<int> &ConvolutionOperator::getStride() const {
+    std::vector<int> ConvolutionOperator::getStride() const {
         return stride_;
     }
 
@@ -81,7 +80,7 @@ namespace kuiper_infer {
         stride_ = stride;
     }
 
-    const std::vector<int> &ConvolutionOperator::getPadding() const {
+    std::vector<int> ConvolutionOperator::getPadding() const {
         return padding_;
     }
 
@@ -89,7 +88,7 @@ namespace kuiper_infer {
         padding_ = padding;
     }
 
-    const std::vector<int> &ConvolutionOperator::getDilation() const {
+    std::vector<int> ConvolutionOperator::getDilation() const {
         return dilation_;
     }
 
@@ -97,7 +96,7 @@ namespace kuiper_infer {
         dilation_ = dilation;
     }
 
-    const std::vector<int> &ConvolutionOperator::getKernelSize() const {
+    std::vector<int> ConvolutionOperator::getKernelSize() const {
         return kernel_size_;
     }
 
@@ -121,7 +120,7 @@ namespace kuiper_infer {
         out_channels_ = outChannels;
     }
 
-    const std::string &ConvolutionOperator::getPaddingMode() const {
+    std::string ConvolutionOperator::getPaddingMode() const {
         return padding_mode_;
     }
 

@@ -25,12 +25,9 @@ namespace kuiper_infer {
             const std::shared_ptr<Tensor<float>> &input_data = inputs.at(i)->clone();
             input_data->data().transform([&](float value) {
                 float thresh = op_->get_thresh();
-                if (value <= thresh) { return 0.f; }
-                else {
-                    return value;
-                }
+                return std::max(value, thresh) + std::min(value, thresh) * op_->getAlpha();
             });
-            outputs[i]=input_data;
+            outputs[i] = input_data;
         }
     }
 
@@ -38,6 +35,7 @@ namespace kuiper_infer {
         std::shared_ptr<Layer> relu_layer = std::make_shared<LeakyReluLayer>(op);
         return relu_layer;
     }
+
     void LeakyReluLayer::Forwards() {
         const std::vector<std::shared_ptr<RuntimeOperand>> &input_operand_datas = this->op_->input_operands_seq;
         std::vector<std::shared_ptr<Tensor<float>>> layer_input_datas;
@@ -51,5 +49,6 @@ namespace kuiper_infer {
                         << "Layer output data is empty";
         Forwards(layer_input_datas, this->op_->output_operands->datas);
     }
+
     LayerRegistererWrapper kLeakyReluLayer(OpType::kOperatorLeakyRelu, LeakyReluLayer::CreateInstance);
 }

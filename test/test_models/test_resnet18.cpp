@@ -33,9 +33,9 @@ TEST(test_model, test_resnet18) {
     std::vector<float> mean = {0.3, 0.4, 0.5};
     std::vector<float> std = {1.0, 1.0, 1.0};
     float max_pixel_value = 255;
-    std::vector<TransformBase *> v;
-    v.push_back(new Normalize(mean, std, max_pixel_value));
-    TransformFactory *transformFactory = new TransformFactory(v);
+    std::vector<std::shared_ptr<TransformBase>> v;
+    v.push_back(std::make_shared<Normalize>(mean, std, max_pixel_value));
+    std::shared_ptr<TransformFactory> transformFactory = std::make_shared<TransformFactory>(v);
     transformFactory->forward(inputs, inputs);
     outputs = graph.forward(inputs, false); // 推理
     SoftMaxLayer layer(std::make_shared<SoftMaxOperator>());

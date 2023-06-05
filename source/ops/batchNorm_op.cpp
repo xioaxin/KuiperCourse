@@ -8,23 +8,23 @@ namespace kuiper_infer {
 
     BatchNormOperator::BatchNormOperator(float eps) : RuntimeOperator(OpType::kOperatorBatchNorm), eps_(eps) {}
 
-    const std::vector<float> BatchNormOperator::getAffineAlpha() const {
+    std::vector<float> BatchNormOperator::getAffineAlpha() const {
         return affine_alpha_;
     }
 
-    const std::vector<float> BatchNormOperator::getAffineBata() const {
+    std::vector<float> BatchNormOperator::getAffineBata() const {
         return affine_beta_;
     }
 
-    const float BatchNormOperator::getEps() const {
+    float BatchNormOperator::getEps() const {
         return eps_;
     }
 
-    const sftensor BatchNormOperator::getMeanValue() const {
+    sftensor BatchNormOperator::getMeanValue() const {
         return mean_value_;
     }
 
-    const sftensor BatchNormOperator::getVarValue() const {
+    sftensor BatchNormOperator::getVarValue() const {
         return var_value_;
     }
 

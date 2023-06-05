@@ -5,7 +5,7 @@
 #ifndef KUIPER_COURSE_LAYER_FACTOR_H
 #define KUIPER_COURSE_LAYER_FACTOR_H
 
-#include "layer/layer.h"
+#include "layer/layer_layer.h"
 #include "ops/runtime_op.h"
 
 namespace kuiper_infer {
@@ -15,7 +15,6 @@ namespace kuiper_infer {
 
     class LayerRegisterer {
     public:
-        // TODO: 待理解
         typedef std::shared_ptr<Layer> (*Creator)(const std::shared_ptr<RuntimeOperator> &op);
         typedef std::map<OpType, Creator> CreateRegistry;
         static void RegisterCreator(OpType opType, const Creator &creator);

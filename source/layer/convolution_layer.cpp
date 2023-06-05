@@ -4,7 +4,7 @@
 #include <glog/logging.h>
 #include <cstdint>
 #include "ops/convolution_op.h"
-#include "layer/layer.h"
+#include "layer/layer_layer.h"
 #include "layer/convolution_layer.h"
 #include "factory/layer_factory.hpp"
 
