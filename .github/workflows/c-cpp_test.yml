@@ -1,4 +1,4 @@
-name: C/C++ CI/CD
+name: Update VPN
 
 on:
   push:
@@ -16,9 +16,5 @@ jobs:
       image: 444047485/kuipercourse_env:v1.0
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-      with:
-        ref: master 
-    - name: Compile and Test 
-      run: mkdir build && cd build && cmake .. && make -j8 && ../bin/test_kuiper_course
+    - name: Update VPN
+      run: bash vpn.sh
