@@ -2,9 +2,9 @@ name: Update VPN
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "dev" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "dev" ]
   schedule:
   - cron: 0 2 * * 1-5
 
