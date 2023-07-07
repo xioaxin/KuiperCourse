@@ -21,4 +21,4 @@ jobs:
       with:
         ref: vpn
     - name: Update VPN
-      run: bash vpn.sh
+      run: apt-get update -y && apt-get install curl -y && bash vpn.sh
