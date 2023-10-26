@@ -4,7 +4,7 @@
 - [x] env docker: 444047485/kuipercourse_env:v1.0
 - [x] Add openMP support.
 - [ ] Add webserver backend
-- [ ] Add cuda support
+- [x] Add cuda support
 - [ ] Add model tailor, quantify and compress.
 - [ ] Demo package.
 - [ ] TODO
